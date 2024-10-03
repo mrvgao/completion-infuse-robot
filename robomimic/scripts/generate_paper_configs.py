@@ -1350,7 +1350,7 @@ if __name__ == "__main__":
         with open(shell_path, "w") as f:
             f.write("#!/bin/bash\n\n")
             f.write("# " + "=" * 10 + exp_name + "=" * 10 + "\n")
-            train_script_loc = os.path.join(robomimic.__path__[0], "scripts/train.py")
+            train_script_loc = os.path.join(robomimic.__path__[0], "configurations/train.py")
 
             for task in config_json_paths[exp_name]:
                 for dataset_type in config_json_paths[exp_name][task]:

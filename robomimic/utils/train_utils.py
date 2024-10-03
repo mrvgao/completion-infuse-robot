@@ -797,6 +797,9 @@ def run_epoch(model, data_loader, epoch, validate=False, num_steps=None, obs_nor
         input_batch = model.postprocess_batch_for_training(input_batch, obs_normalization_stats=obs_normalization_stats)
         timing_stats["Process_Batch"].append(time.time() - t)
 
+        PROGRESS = 'progress'
+        input_batch[PROGRESS] = batch[PROGRESS]
+
         # forward and backward pass
         t = time.time()
         info = model.train_on_batch(input_batch, epoch, validate=validate)

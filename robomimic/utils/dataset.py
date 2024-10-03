@@ -521,6 +521,9 @@ class SequenceDataset(torch.utils.data.Dataset):
             seq_length=self.seq_length
         )
 
+        progress = (np.arange(self.seq_length) + index_in_demo) / demo_length
+        meta['progress'] = progress
+
         # determine goal index
         goal_index = None
         if self.goal_mode == "last":
@@ -965,7 +968,9 @@ class R2D2Dataset(SequenceDataset):
         # end at offset index if not padding for seq length
         demo_length_offset = 0 if self.pad_seq_length else (self.seq_length - 1)
         end_index_in_demo = demo_length - demo_length_offset
-        
+
+        progress = (np.arange(self.seq_length) + index_in_demo) / demo_length
+
         meta = self.get_dataset_sequence_from_demo(
             demo_id,
             index_in_demo=index_in_demo,
@@ -1033,6 +1038,7 @@ class R2D2Dataset(SequenceDataset):
         # also return the sampled index
         meta["index"] = index
 
+        meta['progress'] = progress
         # language embedding
         T = meta["actions"].shape[0]
         if "demo_id" in self._demo_id_to_demo_lang_emb.keys():

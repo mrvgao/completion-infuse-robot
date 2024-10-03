@@ -913,6 +913,7 @@ class MIMO_Transformer(Module):
         transformer_activation="gelu",
         transformer_nn_parameter_for_timesteps=False,
         encoder_kwargs=None,
+            progress_dim_size=None,  # scalar(p) -> MLP -> progress_dim_size -> obs encoding_size
     ):
         """
         Args:
@@ -974,6 +975,15 @@ class MIMO_Transformer(Module):
         else:
             self.nets["embed_timestep"] = nn.Embedding(max_timestep, transformer_embed_dim)
 
+        self.progress_dim_size = progress_dim_size
+
+        if progress_dim_size > 0:
+            self.nets['progress_mlp'] = torch.nn.Sequential(
+                nn.Linear(in_features=1, out_features=progress_dim_size),
+                nn.ReLU(),
+                nn.Linear(in_features=progress_dim_size, out_features=transformer_embed_dim)
+            )
+
         # layer norm for embeddings
         self.nets["embed_ln"] = nn.LayerNorm(transformer_embed_dim)
         
@@ -1009,6 +1019,21 @@ class MIMO_Transformer(Module):
         of a list since outputs are dictionaries.
         """
         return { k : list(self.output_shapes[k]) for k in self.output_shapes }
+
+    def get_progress_embedding(self, progress, original_embeddings):
+        if self.progress_dim_size == 0:
+            return torch.zeros(original_embeddings.shape, device=original_embeddings.device)
+        else:
+            progress = progress.unsqueeze(-1)
+            batch_size, timesteps, _ = progress.size()
+            # Reshape the input to (batch_size * timesteps, input_dim)
+            progress = progress.view(batch_size * timesteps, -1)
+            progress = progress.to(original_embeddings.device)
+            progress = progress.to(original_embeddings.dtype)  # Ensure the tensor is in float32
+
+            progress_embeddings = self.nets['progress_mlp'](progress)
+            progress_embeddings = progress_embeddings.view(batch_size, timesteps, -1)
+            return progress_embeddings
 
     def embed_timesteps(self, embeddings):
         """
@@ -1083,6 +1108,8 @@ class MIMO_Transformer(Module):
                 to @self.output_shapes. Leading dimensions will be batch and time [B, T, ...]
                 for each tensor.
         """
+        progresses = inputs['obs']['progresses']
+
         for obs_group in self.input_obs_group_shapes:
             for k in self.input_obs_group_shapes[obs_group]:
                 # first two dimensions should be [B, T] for inputs
@@ -1102,6 +1129,9 @@ class MIMO_Transformer(Module):
             transformer_embeddings = self.input_embedding(transformer_inputs)
             # pass encoded sequences through transformer
             transformer_encoder_outputs = self.nets["transformer"].forward(transformer_embeddings)
+
+        progress_embeddings = self.get_progress_embedding(progresses, transformer_encoder_outputs)
+        transformer_encoder_outputs = transformer_encoder_outputs + progress_embeddings
 
         transformer_outputs = transformer_encoder_outputs
         # apply decoder to each timestep of sequence to get a dictionary of outputs

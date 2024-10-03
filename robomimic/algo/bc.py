@@ -133,6 +133,7 @@ class BC(PolicyAlgo):
                 that might be relevant for logging
         """
         with TorchUtils.maybe_no_grad(no_grad=validate):
+            batch['obs']['progresses'] = batch["progress"]
             info = super(BC, self).train_on_batch(batch, epoch, validate=validate)
             predictions = self._forward_training(batch)
             losses = self._compute_losses(predictions, batch)
@@ -695,6 +696,7 @@ class BC_Transformer(BC):
             goal_shapes=self.goal_shapes,
             ac_dim=self.ac_dim,
             encoder_kwargs=ObsUtils.obs_encoder_kwargs_from_config(self.obs_config.encoder),
+            progress_dim_size=self.algo_config.progress_emb_size,
             **BaseNets.transformer_args_from_config(self.algo_config.transformer),
         )
         self._set_params_from_config()
@@ -816,6 +818,7 @@ class BC_Transformer_GMM(BC_Transformer):
             min_std=self.algo_config.gmm.min_std,
             std_activation=self.algo_config.gmm.std_activation,
             low_noise_eval=self.algo_config.gmm.low_noise_eval,
+            progress_dim_size=self.algo_config.progress_emb_size,
             encoder_kwargs=ObsUtils.obs_encoder_kwargs_from_config(self.obs_config.encoder),
             **BaseNets.transformer_args_from_config(self.algo_config.transformer),
         )
