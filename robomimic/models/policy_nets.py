@@ -997,6 +997,7 @@ class TransformerActorNetwork(MIMO_Transformer):
         transformer_nn_parameter_for_timesteps=False,
         goal_shapes=None,
         encoder_kwargs=None,
+            progress_dim_size=progress_dim_size,
     ):
         """
         Args:
@@ -1081,6 +1082,7 @@ class TransformerActorNetwork(MIMO_Transformer):
             transformer_nn_parameter_for_timesteps=transformer_nn_parameter_for_timesteps,
 
             encoder_kwargs=encoder_kwargs,
+            progress_dim_size=progress_dim_size,
         )
 
     def _get_output_shapes(self):
@@ -1159,6 +1161,7 @@ class TransformerGMMActorNetwork(TransformerActorNetwork):
         use_tanh=False,
         goal_shapes=None,
         encoder_kwargs=None,
+            progress_dim_size=0,
     ):
         """
         Args:
@@ -1250,6 +1253,7 @@ class TransformerGMMActorNetwork(TransformerActorNetwork):
             transformer_nn_parameter_for_timesteps=transformer_nn_parameter_for_timesteps,            
             encoder_kwargs=encoder_kwargs,
             goal_shapes=goal_shapes,
+            progress_dim_size=progress_dim_size,
         )
 
     def _get_output_shapes(self):
