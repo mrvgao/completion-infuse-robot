@@ -309,7 +309,7 @@
             "num_heads": 8
         },
         "language_conditioned": false,
-        "progress_emb_size": 0
+        "progress_dim_size": 0
     },
     "observation": {
         "modalities": {
