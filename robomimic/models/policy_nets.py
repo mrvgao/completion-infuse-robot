@@ -997,7 +997,7 @@ class TransformerActorNetwork(MIMO_Transformer):
         transformer_nn_parameter_for_timesteps=False,
         goal_shapes=None,
         encoder_kwargs=None,
-            progress_dim_size=progress_dim_size,
+            progress_dim_size=0,
     ):
         """
         Args:
