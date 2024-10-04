@@ -156,13 +156,11 @@ class BC(PolicyAlgo):
             info["predictions"] = TensorUtils.detach(predictions)
             info["losses"] = TensorUtils.detach(losses)
 
-            import pdb; pdb.set_trace()
-
             if completion_embedding is not None:
                 self.completion_task_embedding_optimizer.zero_grad()
                 losses['action_loss'].backward()
                 self.completion_task_embedding_optimizer.step()
-                info.update(step_info)
+                self.schedulers_for_completion_task_embedding.step(losses['action_loss'])
             else:
                 if not validate:
                     step_info = self._train_step(losses)
@@ -872,7 +870,7 @@ class BC_Transformer_GMM(BC_Transformer):
             self.completion_task_embedding_optimizer,
                                                                                       mode='min',
             factor=0.5,
-            patience=5,
+            patience=50,
             verbose=True
         )
 
