@@ -842,7 +842,7 @@ class BC_Transformer_GMM(BC_Transformer):
 
         self.completion_task_embedding_optimizer = torch.optim.Adam(self.axuiliary_completion_mapping_nets.parameters(), lr=1e-3)
 
-        self.schedulers_for_completion_task_embedding = torch.optim.ReduceLROnPlateau(
+        self.schedulers_for_completion_task_embedding = torch.optim.lr_scheduler.ReduceLROnPlateau(
             self.completion_task_embedding_optimizer,
                                                                                       mode='min',
             factor=0.5,
