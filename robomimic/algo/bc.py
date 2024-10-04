@@ -141,8 +141,6 @@ class BC(PolicyAlgo):
 
             del batch['obs']['progresses']
 
-            import pdb; pdb.set_trace()
-
             if self.axuiliary_completion_mapping_nets.hidden_mapping_size > 0:
                 completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb)
                 completion_embedding = completion_embedding.unsqueeze(1).repeat(1, timestep, 1)
