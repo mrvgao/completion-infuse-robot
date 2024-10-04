@@ -537,6 +537,9 @@ class SequenceDataset(torch.utils.data.Dataset):
         )
 
         progress = (np.arange(self.seq_length) + index_in_demo) / demo_length
+
+        assert np.max(progress) <= 1, (progress, index_in_demo, demo_length)
+
         meta['obs']['progresses'] = progress.reshape(-1, 1).astype(np.float32)
 
         if self.load_next_obs:
