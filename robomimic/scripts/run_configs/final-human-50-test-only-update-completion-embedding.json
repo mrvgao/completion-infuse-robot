@@ -1,7 +1,7 @@
 {
     "algo_name": "bc",
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/model_epoch_10.pth",
-    "cuda_mark": "cuda:1",
+    "cuda_mark": "cuda:2",
     "experiment": {
         "name": "TASL-human-50-only-update-completion-emb",
         "validate": false,
