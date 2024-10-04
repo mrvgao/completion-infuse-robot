@@ -1119,6 +1119,8 @@ class MIMO_Transformer(Module):
             # pass encoded sequences through transformer
             transformer_encoder_outputs = self.nets["transformer"].forward(transformer_embeddings)
 
+        import pdb; pdb.set_trace()
+
         completion_embedding = inputs['completion_embedding']
 
         if completion_embedding is not None:
