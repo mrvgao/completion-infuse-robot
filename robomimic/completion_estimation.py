@@ -9,12 +9,12 @@ class CompletionTaskEmbeddingModel(nn.Module):
         self.nonlinear = nn.ReLU()  # Nonlinear activation function
         self.map_to_V = nn.Linear(d, V)  # Maps to dimension V
 
-    def forward(self, p, s):
+    def forward(self, completion_rate, task_str_emb):
         # Map sentence embedding s to a scalar
         import pdb; pdb.set_trace()
-        s_scalar = self.map_s_to_scalar(s)
+        s_scalar = self.map_s_to_scalar(task_str_emb)
         # Concatenate scalar s and scalar p
-        concatenated = torch.cat((p, s_scalar), dim=1)
+        concatenated = torch.cat((completion_rate, s_scalar), dim=1)
         # Map the concatenated result to dimension d
         mapped_to_d = self.map_to_d(concatenated)
         # Apply nonlinear function
@@ -39,6 +39,8 @@ if __name__ == '__main__':
     p = torch.randn(batch_size, 1)  # Example scalar 'p' for each time step
     s = torch.randn(batch_size, input_dim_s)  # Example sentence embeddings 's'
 
+    print(p.size())
+    print(s.size())
     # Forward pass
     output = model(p, s)
     print(output.shape)  # Output shape: [batch_size, time_steps, V]
