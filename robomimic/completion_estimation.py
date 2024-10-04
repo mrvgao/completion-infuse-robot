@@ -2,25 +2,28 @@ import torch
 import torch.nn as nn
 
 class CompletionTaskEmbeddingModel(nn.Module):
-    def __init__(self, input_dim_s, hidden_mapping_size, V):
+    def __init__(self, task_str_emb_size, hidden_mapping_size, transformer_encoding_size):
         super(CompletionTaskEmbeddingModel, self).__init__()
         self.hidden_mapping_size = hidden_mapping_size
-        self.map_s_to_scalar = nn.Linear(input_dim_s, 1)  # Maps sentence embedding 's' to scalar
-        self.map_to_d = nn.Linear(2, hidden_mapping_size)  # Concatenates 'p' and scalar s, then maps to dimension d
+        self.map_completion_to_vector = nn.Linear(1, hidden_mapping_size)  # Maps scalar 'p' to dimension d
+        # self.map_s_to_scalar = nn.Linear(input_dim_s, 1)  # Maps sentence embedding 's' to scalar
+        self.merge_info = nn.Linear(hidden_mapping_size + task_str_emb_size, hidden_mapping_size)  # Concatenates 'p' and scalar s, then maps to dimension d
         self.nonlinear = nn.ReLU()  # Nonlinear activation function
-        self.map_to_V = nn.Linear(hidden_mapping_size, V)  # Maps to dimension V
+        self.map_to_encoding_input_size = nn.Linear(hidden_mapping_size, transformer_encoding_size)  # Maps to dimension V
 
     def forward(self, completion_rate, task_str_emb):
         # Map sentence embedding s to a scalar
-        s_scalar = self.map_s_to_scalar(task_str_emb)
+        completion_emb = self.map_completion_to_vector(completion_rate)
+
+        # s_scalar = self.map_s_to_scalar(task_str_emb)
         # Concatenate scalar s and scalar p
-        concatenated = torch.cat((completion_rate, s_scalar), dim=1)
+        concatenated = torch.cat((completion_emb, task_str_emb), dim=1)
         # Map the concatenated result to dimension d
-        mapped_to_d = self.map_to_d(concatenated)
+        mapped_to_d = self.merge_info(concatenated)
         # Apply nonlinear function
         nonlinear_output = self.nonlinear(mapped_to_d)
         # Map to dimension V
-        output = self.map_to_V(nonlinear_output)
+        output = self.map_to_encoding_input_size(nonlinear_output)
         return output
 
 
