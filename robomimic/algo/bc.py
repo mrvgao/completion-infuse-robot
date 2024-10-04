@@ -134,9 +134,9 @@ class BC(PolicyAlgo):
                 that might be relevant for logging
         """
         with TorchUtils.maybe_no_grad(no_grad=validate):
-            batch['obs']['progresses'] = batch["progress"]
-
             import pdb; pdb.set_trace()
+
+            completion_embedding = self.axuiliary_completion_mapping_nets(batch['progresses'], batch['obs'][LANG_EMB_KEY])
 
             info = super(BC, self).train_on_batch(batch, epoch, validate=validate)
             predictions = self._forward_training(batch, completion_embedding=None)
@@ -167,7 +167,7 @@ class BC(PolicyAlgo):
         actions = self.nets["policy"](
             obs_dict=batch["obs"],
             goal_dict=batch["goal_obs"],
-                        completion_embedding=completion_embedding
+            completion_embedding=completion_embedding
         )
         predictions["actions"] = actions
         return predictions
