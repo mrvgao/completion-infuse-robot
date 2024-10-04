@@ -832,10 +832,10 @@ class BC_Transformer_GMM(BC_Transformer):
         self.nets = self.nets.float().to(self.device)
 
         self.axuiliary_completion_mapping_nets = CompletionTaskEmbeddingModel(
+            self.algo_config.lang_embed_dim,
+            self.algo_config.progress_dim_size,
             self.algo_config.transformer.embed_dim,
-                                                                              self.algo_config.progress_dim_size,
-                                                                              self.algo_config.lang_embed_dim
-                                                                              )
+        )
 
         self.axuiliary_completion_mapping_nets = self.axuiliary_completion_mapping_nets.float().to(self.device)
 

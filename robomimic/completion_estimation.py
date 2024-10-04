@@ -50,8 +50,8 @@ if __name__ == '__main__':
     model = CompletionTaskEmbeddingModel(input_dim_s, d, V)
 
     # Example input data
-    batch_size = 32
-    time_steps = 20
+    batch_size = 16
+    time_steps = 10
     p = torch.randn(batch_size, time_steps)  # Example scalar 'p' for each time step
     s = torch.randn(batch_size, time_steps, input_dim_s)  # Example sentence embeddings 's'
 
