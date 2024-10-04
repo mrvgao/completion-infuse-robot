@@ -19,6 +19,7 @@ import robomimic.utils.obs_utils as ObsUtils
 from robomimic.macros import LANG_EMB_KEY
 
 from robomimic.algo import register_algo_factory_func, PolicyAlgo
+from robomimic.completion_estimation import CompletionTaskEmbeddingModel
 
 
 @register_algo_factory_func("bc")
@@ -134,8 +135,12 @@ class BC(PolicyAlgo):
         """
         with TorchUtils.maybe_no_grad(no_grad=validate):
             batch['obs']['progresses'] = batch["progress"]
+
+            transfor_embedding_dim = config.algo.transformer.embed_dim
+            task_embedding_size = batch[LANG_EMB_KEY].shape[1]
+
             info = super(BC, self).train_on_batch(batch, epoch, validate=validate)
-            predictions = self._forward_training(batch)
+            predictions = self._forward_training(batch, completion_embedding=None)
             losses = self._compute_losses(predictions, batch)
 
             info["predictions"] = TensorUtils.detach(predictions)
@@ -147,7 +152,7 @@ class BC(PolicyAlgo):
 
         return info
 
-    def _forward_training(self, batch):
+    def _forward_training(self, batch, completion_embedding=None):
         """
         Internal helper function for BC algo class. Compute forward pass
         and return network outputs in @predictions dict.
@@ -160,7 +165,11 @@ class BC(PolicyAlgo):
             predictions (dict): dictionary containing network outputs
         """
         predictions = OrderedDict()
-        actions = self.nets["policy"](obs_dict=batch["obs"], goal_dict=batch["goal_obs"])
+        actions = self.nets["policy"](
+            obs_dict=batch["obs"],
+            goal_dict=batch["goal_obs"],
+                        completion_embedding=completion_embedding
+        )
         predictions["actions"] = actions
         return predictions
 
@@ -696,7 +705,6 @@ class BC_Transformer(BC):
             goal_shapes=self.goal_shapes,
             ac_dim=self.ac_dim,
             encoder_kwargs=ObsUtils.obs_encoder_kwargs_from_config(self.obs_config.encoder),
-            progress_dim_size=self.algo_config.progress_dim_size,
             **BaseNets.transformer_args_from_config(self.algo_config.transformer),
         )
         self._set_params_from_config()
@@ -818,14 +826,25 @@ class BC_Transformer_GMM(BC_Transformer):
             min_std=self.algo_config.gmm.min_std,
             std_activation=self.algo_config.gmm.std_activation,
             low_noise_eval=self.algo_config.gmm.low_noise_eval,
-            progress_dim_size=self.algo_config.progress_dim_size,
             encoder_kwargs=ObsUtils.obs_encoder_kwargs_from_config(self.obs_config.encoder),
             **BaseNets.transformer_args_from_config(self.algo_config.transformer),
         )
         self._set_params_from_config()
         self.nets = self.nets.float().to(self.device)
 
-    def _forward_training(self, batch, epoch=None):
+        self.axuiliary_completion_mapping_nets = CompletionTaskEmbeddingModel()
+
+        self.completion_task_embedding_optimizer = torch.optim.Adam(self.axuiliary_completion_mapping_nets.parameters(), lr=1e-3)
+
+        self.schedulers_for_completion_task_embedding = torch.optim.ReduceLROnPlateau(
+            self.completion_task_embedding_optimizer,
+                                                                                      mode='min',
+            factor=0.5,
+            patience=5,
+            verbose=True
+        )
+
+    def _forward_training(self, batch, epoch=None, completion_embedding=None):
         """
         Modify from super class to support GMM training.
         """
@@ -842,6 +861,7 @@ class BC_Transformer_GMM(BC_Transformer):
             actions=None,
             goal_dict=batch["goal_obs"],
             low_noise_eval=False,
+            completion_embedding=completion_embedding
         )
 
         # make sure that this is a batch of multivariate action distributions, so that

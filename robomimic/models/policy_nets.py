@@ -997,7 +997,6 @@ class TransformerActorNetwork(MIMO_Transformer):
         transformer_nn_parameter_for_timesteps=False,
         goal_shapes=None,
         encoder_kwargs=None,
-            progress_dim_size=0,
     ):
         """
         Args:
@@ -1082,7 +1081,6 @@ class TransformerActorNetwork(MIMO_Transformer):
             transformer_nn_parameter_for_timesteps=transformer_nn_parameter_for_timesteps,
 
             encoder_kwargs=encoder_kwargs,
-            progress_dim_size=progress_dim_size,
         )
 
     def _get_output_shapes(self):
@@ -1161,7 +1159,6 @@ class TransformerGMMActorNetwork(TransformerActorNetwork):
         use_tanh=False,
         goal_shapes=None,
         encoder_kwargs=None,
-            progress_dim_size=0,
     ):
         """
         Args:
@@ -1253,7 +1250,6 @@ class TransformerGMMActorNetwork(TransformerActorNetwork):
             transformer_nn_parameter_for_timesteps=transformer_nn_parameter_for_timesteps,            
             encoder_kwargs=encoder_kwargs,
             goal_shapes=goal_shapes,
-            progress_dim_size=progress_dim_size,
         )
 
     def _get_output_shapes(self):
@@ -1267,7 +1263,7 @@ class TransformerGMMActorNetwork(TransformerActorNetwork):
             logits=(self.num_modes,),
         )
 
-    def forward_train(self, obs_dict, actions=None, goal_dict=None, low_noise_eval=None):
+    def forward_train(self, obs_dict, actions=None, goal_dict=None, low_noise_eval=None, completion_embedding=None):
         """
         Return full GMM distribution, which is useful for computing
         quantities necessary at train-time, like log-likelihood, KL 
@@ -1285,7 +1281,7 @@ class TransformerGMMActorNetwork(TransformerActorNetwork):
             mod = list(obs_dict.keys())[0]
             goal_dict = TensorUtils.unsqueeze_expand_at(goal_dict, size=obs_dict[mod].shape[1], dim=1)
 
-        forward_kwargs = dict(obs=obs_dict, goal=goal_dict)
+        forward_kwargs = dict(obs=obs_dict, goal=goal_dict, completion_embedding=completion_embedding)
 
         outputs = MIMO_Transformer.forward(self, **forward_kwargs)
         
