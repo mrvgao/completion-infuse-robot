@@ -139,9 +139,9 @@ class BC(PolicyAlgo):
 
             del batch['obs']['progresses']
 
-            completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb)
-
             import pdb; pdb.set_trace()
+
+            completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb)
 
             info = super(BC, self).train_on_batch(batch, epoch, validate=validate)
             predictions = self._forward_training(batch, completion_embedding=completion_embedding)
