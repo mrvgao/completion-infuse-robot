@@ -12,7 +12,6 @@ class CompletionTaskEmbeddingModel(nn.Module):
 
     def forward(self, completion_rate, task_str_emb):
         # Map sentence embedding s to a scalar
-        import pdb; pdb.set_trace()
         s_scalar = self.map_s_to_scalar(task_str_emb)
         # Concatenate scalar s and scalar p
         concatenated = torch.cat((completion_rate, s_scalar), dim=1)
