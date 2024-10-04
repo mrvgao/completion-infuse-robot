@@ -1098,6 +1098,9 @@ class MIMO_Transformer(Module):
                 to @self.output_shapes. Leading dimensions will be batch and time [B, T, ...]
                 for each tensor.
         """
+        completion_embedding = inputs['completion_embedding']
+
+        del inputs['completion_embedding']
 
         for obs_group in self.input_obs_group_shapes:
             for k in self.input_obs_group_shapes[obs_group]:
@@ -1120,8 +1123,6 @@ class MIMO_Transformer(Module):
             transformer_encoder_outputs = self.nets["transformer"].forward(transformer_embeddings)
 
         import pdb; pdb.set_trace()
-
-        completion_embedding = inputs['completion_embedding']
 
         if completion_embedding is not None:
             transformer_encoder_outputs = transformer_encoder_outputs + completion_embedding
