@@ -185,7 +185,7 @@
         },
         "language_conditioned": false,
         "progress_dim_size": 0,
-        "lang_embed_dim": 512,
+        "lang_embed_dim": 512
     },
     "observation": {
         "modalities": {
