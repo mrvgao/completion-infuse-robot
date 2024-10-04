@@ -536,9 +536,8 @@ class SequenceDataset(torch.utils.data.Dataset):
             prefix="obs"
         )
 
-        import pdb; pdb.set_trace()
         progress = (np.arange(self.seq_length) + index_in_demo) / demo_length
-        meta['obs']['progresses'] = progress
+        meta['obs']['progresses'] = progress.unsqueeze(-1)
 
         if self.load_next_obs:
             meta["next_obs"] = self.get_obs_sequence_from_demo(
