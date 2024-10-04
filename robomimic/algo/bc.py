@@ -834,7 +834,11 @@ class BC_Transformer_GMM(BC_Transformer):
         self._set_params_from_config()
         self.nets = self.nets.float().to(self.device)
 
-        self.axuiliary_completion_mapping_nets = CompletionTaskEmbeddingModel()
+        self.axuiliary_completion_mapping_nets = CompletionTaskEmbeddingModel(
+            self.algo_config.transformer.embed_dim,
+                                                                              self.algo_config.progress_dim_size,
+                                                                              self.algo_config.lang_embed_dim
+                                                                              )
 
         self.completion_task_embedding_optimizer = torch.optim.Adam(self.axuiliary_completion_mapping_nets.parameters(), lr=1e-3)
 

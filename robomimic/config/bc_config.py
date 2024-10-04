@@ -110,3 +110,4 @@ class BCConfig(BaseConfig):
         self.algo.language_conditioned = False                      # whether policy is language conditioned
 
         self.algo.progress_dim_size = 0
+        self.algo.lang_embed_dim = 512
