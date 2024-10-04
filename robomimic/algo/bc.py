@@ -139,6 +139,8 @@ class BC(PolicyAlgo):
             current_completion = batch['obs']['progresses'][:, 0, :]
             current_task_emb = batch['obs'][LANG_EMB_KEY][:, 0, :]
 
+            del batch['obs']['progresses']
+
             completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb)
 
             info = super(BC, self).train_on_batch(batch, epoch, validate=validate)
