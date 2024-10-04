@@ -1121,6 +1121,8 @@ class MIMO_Transformer(Module):
 
         completion_embedding = inputs['completion_embedding']
 
+        import pdb; pdb.set_trace()
+
         if completion_embedding:
             transformer_encoder_outputs = transformer_encoder_outputs + completion_embedding
 
