@@ -139,7 +139,7 @@ class BC(PolicyAlgo):
             current_completion = batch['obs']['progresses'][:, 0, :]
             current_task_emb = batch['obs'][LANG_EMB_KEY][:, 0, :]
 
-            completion_embedding = self.axuiliary_completion_mapping_nets(batch['obs']['progresses'], batch['obs'][LANG_EMB_KEY])
+            completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb)
 
             info = super(BC, self).train_on_batch(batch, epoch, validate=validate)
             predictions = self._forward_training(batch, completion_embedding=None)
@@ -148,9 +148,14 @@ class BC(PolicyAlgo):
             info["predictions"] = TensorUtils.detach(predictions)
             info["losses"] = TensorUtils.detach(losses)
 
-            if not validate:
-                step_info = self._train_step(losses)
-                info.update(step_info)
+            if completion_embedding:
+                self.completion_task_embedding_optimizer.zero_grad()
+                losses['action_loss'].backward()
+                self.completion_task_embedding_optimizer.step()
+            else:
+                if not validate:
+                    step_info = self._train_step(losses)
+                    info.update(step_info)
 
         return info
 
