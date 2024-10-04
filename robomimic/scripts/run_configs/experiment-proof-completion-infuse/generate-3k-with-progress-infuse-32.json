@@ -3,7 +3,7 @@
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/model_epoch_10.pth",
     "cuda_mark": "cuda:7",
     "experiment": {
-        "name": "TASL-human-50-infuse-progress-32",
+        "name": "TASL-3k-infuse-progress-32",
         "validate": false,
         "only_rollout": false,
         "logging": {
