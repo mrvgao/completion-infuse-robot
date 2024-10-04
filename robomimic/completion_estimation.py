@@ -2,12 +2,13 @@ import torch
 import torch.nn as nn
 
 class CompletionTaskEmbeddingModel(nn.Module):
-    def __init__(self, input_dim_s, d, V):
+    def __init__(self, input_dim_s, hidden_mapping_size, V):
         super(CompletionTaskEmbeddingModel, self).__init__()
+        self.hidden_mapping_size = hidden_mapping_size
         self.map_s_to_scalar = nn.Linear(input_dim_s, 1)  # Maps sentence embedding 's' to scalar
-        self.map_to_d = nn.Linear(2, d)  # Concatenates 'p' and scalar s, then maps to dimension d
+        self.map_to_d = nn.Linear(2, hidden_mapping_size)  # Concatenates 'p' and scalar s, then maps to dimension d
         self.nonlinear = nn.ReLU()  # Nonlinear activation function
-        self.map_to_V = nn.Linear(d, V)  # Maps to dimension V
+        self.map_to_V = nn.Linear(hidden_mapping_size, V)  # Maps to dimension V
 
     def forward(self, completion_rate, task_str_emb):
         # Map sentence embedding s to a scalar
