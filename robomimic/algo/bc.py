@@ -134,8 +134,6 @@ class BC(PolicyAlgo):
                 that might be relevant for logging
         """
         with TorchUtils.maybe_no_grad(no_grad=validate):
-            import pdb; pdb.set_trace()
-
             current_completion = batch['obs']['progresses'][:, 0, :]
             current_task_emb = batch['obs'][LANG_EMB_KEY][:, 0, :]
 
@@ -149,6 +147,8 @@ class BC(PolicyAlgo):
 
             info["predictions"] = TensorUtils.detach(predictions)
             info["losses"] = TensorUtils.detach(losses)
+
+            import pdb; pdb.set_trace()
 
             if completion_embedding is not None:
                 self.completion_task_embedding_optimizer.zero_grad()
