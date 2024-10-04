@@ -813,7 +813,13 @@ class BC_Transformer(BC):
 
         return output
 
-        
+def initialize_weights(model, lower_bound=-0.1, upper_bound=0.1):
+    for module in model.modules():
+        if isinstance(module, nn.Linear):
+            nn.init.uniform_(module.weight, a=lower_bound, b=upper_bound)  # Initialize weights uniformly
+            if module.bias is not None:
+                nn.init.uniform_(module.bias, a=lower_bound, b=upper_bound)  # Initialize bias if exists
+
 
 class BC_Transformer_GMM(BC_Transformer):
     """
@@ -848,6 +854,8 @@ class BC_Transformer_GMM(BC_Transformer):
         )
 
         self.axuiliary_completion_mapping_nets = self.axuiliary_completion_mapping_nets.float().to(self.device)
+
+        initialize_weights(self.axuiliary_completion_mapping_nets, lower_bound=-0.1, upper_bound=0.1)
 
         self.completion_task_embedding_optimizer = torch.optim.Adam(self.axuiliary_completion_mapping_nets.parameters(), lr=1e-3)
 
