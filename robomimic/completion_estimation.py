@@ -13,6 +13,7 @@ class CompletionTaskEmbeddingModel(nn.Module):
         # p: [batch, time_steps]
         # s: [batch, time_steps, input_dim_s]
 
+        import pdb; pdb.set_trace()
         batch_size, time_steps, input_dim_s = s.shape
 
         # Flatten batch and time_steps for efficient processing: [batch * time_steps, input_dim_s]
@@ -52,7 +53,7 @@ if __name__ == '__main__':
     # Example input data
     batch_size = 16
     time_steps = 10
-    p = torch.randn(batch_size, time_steps)  # Example scalar 'p' for each time step
+    p = torch.randn(batch_size, time_steps, 1)  # Example scalar 'p' for each time step
     s = torch.randn(batch_size, time_steps, input_dim_s)  # Example sentence embeddings 's'
 
     # Forward pass
