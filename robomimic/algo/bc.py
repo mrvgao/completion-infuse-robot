@@ -139,6 +139,8 @@ class BC(PolicyAlgo):
             transfor_embedding_dim = config.algo.transformer.embed_dim
             task_embedding_size = batch[LANG_EMB_KEY].shape[1]
 
+            import pdb; pdb.set_trace()
+
             info = super(BC, self).train_on_batch(batch, epoch, validate=validate)
             predictions = self._forward_training(batch, completion_embedding=None)
             losses = self._compute_losses(predictions, batch)
