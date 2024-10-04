@@ -154,6 +154,7 @@ class BC(PolicyAlgo):
                 self.completion_task_embedding_optimizer.zero_grad()
                 losses['action_loss'].backward()
                 self.completion_task_embedding_optimizer.step()
+                info.update(step_info)
             else:
                 if not validate:
                     step_info = self._train_step(losses)
