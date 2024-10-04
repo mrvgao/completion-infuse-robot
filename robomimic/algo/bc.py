@@ -136,6 +136,9 @@ class BC(PolicyAlgo):
         with TorchUtils.maybe_no_grad(no_grad=validate):
             import pdb; pdb.set_trace()
 
+            current_completion = batch['obs']['progresses'][:, 0, :]
+            current_task_emb = batch['obs'][LANG_EMB_KEY][:, 0, :]
+
             completion_embedding = self.axuiliary_completion_mapping_nets(batch['obs']['progresses'], batch['obs'][LANG_EMB_KEY])
 
             info = super(BC, self).train_on_batch(batch, epoch, validate=validate)
