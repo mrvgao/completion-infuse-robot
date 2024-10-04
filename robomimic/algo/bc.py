@@ -150,7 +150,7 @@ class BC(PolicyAlgo):
             info["predictions"] = TensorUtils.detach(predictions)
             info["losses"] = TensorUtils.detach(losses)
 
-            if completion_embedding:
+            if completion_embedding is not None:
                 self.completion_task_embedding_optimizer.zero_grad()
                 losses['action_loss'].backward()
                 self.completion_task_embedding_optimizer.step()
