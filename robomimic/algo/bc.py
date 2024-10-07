@@ -851,27 +851,28 @@ class BC_Transformer_GMM(BC_Transformer):
         self._set_params_from_config()
         self.nets = self.nets.float().to(self.device)
 
-        self.axuiliary_completion_mapping_nets = CompletionEstimationModelComplicationVersion(
-            self.algo_config.lang_embed_dim,
-            self.algo_config.progress_dim_size,
-            self.algo_config.transformer.embed_dim,
-        )
+        if self.algo_config.progress_dim_size > 0:
+            self.axuiliary_completion_mapping_nets = CompletionEstimationModelComplicationVersion(
+                self.algo_config.lang_embed_dim,
+                self.algo_config.progress_dim_size,
+                self.algo_config.transformer.embed_dim,
+            )
 
-        self.axuiliary_completion_mapping_nets = self.axuiliary_completion_mapping_nets.float().to(self.device)
+            self.axuiliary_completion_mapping_nets = self.axuiliary_completion_mapping_nets.float().to(self.device)
 
-        self.axuiliary_completion_mapping_nets.train() # set model to train
+            self.axuiliary_completion_mapping_nets.train() # set model to train
 
-        initialize_weights(self.axuiliary_completion_mapping_nets, lower_bound=-0.1, upper_bound=0.1)
+            initialize_weights(self.axuiliary_completion_mapping_nets, lower_bound=-0.1, upper_bound=0.1)
 
-        self.completion_task_embedding_optimizer = torch.optim.Adam(self.axuiliary_completion_mapping_nets.parameters(), lr=1e-3)
+            self.completion_task_embedding_optimizer = torch.optim.Adam(self.axuiliary_completion_mapping_nets.parameters(), lr=1e-3)
 
-        self.schedulers_for_completion_task_embedding = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            self.completion_task_embedding_optimizer,
-                                                                                      mode='min',
-            factor=0.5,
-            patience=50,
-            verbose=True
-        )
+            self.schedulers_for_completion_task_embedding = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                self.completion_task_embedding_optimizer,
+                                                                                          mode='min',
+                factor=0.5,
+                patience=50,
+                verbose=True
+            )
 
     def _forward_training(self, batch, epoch=None, completion_embedding=None):
         """
