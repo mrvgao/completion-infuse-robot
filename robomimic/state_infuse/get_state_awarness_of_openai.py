@@ -38,7 +38,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
                 "content": [
                     {
                         "type": "text",
-                        "text": open('./configs/task_description.txt', 'r').read().replace('\n', '').format(
+                        "text": open('robomimic/state_infuse/configs/prompts.txt', 'r').read().replace('\n', '').format(
                             {'task': task, 'step': step, 'horizon': horizon})
                     },
                     {
