@@ -155,7 +155,7 @@ class BC(PolicyAlgo):
 
             if completion_embedding is not None:
                 self.completion_task_embedding_optimizer.zero_grad()
-                losses['action_loss'].backward()
+                losses['action_loss'].backward(retain_graph=True)
                 self.completion_task_embedding_optimizer.step()
                 self.schedulers_for_completion_task_embedding.step(losses['action_loss'])
 
