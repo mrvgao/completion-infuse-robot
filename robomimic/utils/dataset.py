@@ -501,7 +501,6 @@ class SequenceDataset(torch.utils.data.Dataset):
         """
         Main implementation of getitem when not using cache.
         """
-
         demo_id = self._index_to_demo_id[index]
         demo_start_index = self._demo_id_to_start_indices[demo_id]
         demo_length = self._demo_id_to_demo_length[demo_id]
@@ -540,6 +539,7 @@ class SequenceDataset(torch.utils.data.Dataset):
         assert p <= 1, p
 
         meta['obs']['progresses'] = np.array([ [p] ])
+        meta['task_str'] = self._demo_id_to_demo_lang_str[demo_id]
 
         if self.load_next_obs:
             meta["next_obs"] = self.get_obs_sequence_from_demo(

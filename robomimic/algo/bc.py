@@ -138,6 +138,26 @@ class BC(PolicyAlgo):
 
             timestep = batch['obs'][LANG_EMB_KEY].size()[1]
 
+            first_frame_left_images = batch['obs']['robot0_agentview_left_image'][:,0,:]
+            first_frame_hand_images = batch['obs']['robot0_eye_in_hand_image'][:,0,:]
+            first_frame_right_images = batch['obs']['robot0_agentview_right_image'][:,0,:]
+
+            batch_size = first_frame_right_images.size()[0]
+
+            for index in range(batch_size):
+                left_image = first_frame_left_images[index].cpu().numpy()
+                hand_image = first_frame_hand_images[index].cpu().numpy()
+                right_image = first_frame_right_images[index].cpu().numpy()
+
+                internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, "pick and place")
+
+                # completion_task_embedding = CompletionTaskEmbeddingModel(internal_state, current_completion[index], current_task_emb[index])
+                # completion_task_embedding = completion_task_embedding.to(self.device)
+                # completion_task_embedding = completion_task_embedding.float()
+
+                break
+
+
             import pdb; pdb.set_trace()
 
             del batch['obs']['progresses']
