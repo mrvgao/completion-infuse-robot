@@ -183,7 +183,7 @@ def train(config, device):
 
     if config.experiment.only_rollout:
         target_value_model = ValueResNetWithAttnPerformance()
-        target_value_model.load_state_dict(torch.load(config.value_model_path))
+        target_value_model.load_state_dict(torch.load(config.progress_model_path))
         target_value_model.to(device)
         target_value_model.eval()
     else:
