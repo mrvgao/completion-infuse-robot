@@ -36,10 +36,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
           "content": [
             {
               "type": "text",
-              "text": f"there three images are left, mid, and right images of a robot who is executing the task {task} at "
-                      f"step {step} out of {horizon}. The {step}/{horizon} can be treat as completion rate of the task. Please specify"
-                      f"what actions of this robots here should be taken next, and what the errors will be probably made by the robot.And if there is any potential error, please"
-                      f"give what the robot should do to avoid the error."
+              "text": open('configs/task_description.txt', 'r').read().replace('\n', '').format({'task': task, 'step': step, 'horizon': horizon})
             },
             {
               "type": "image_url",
