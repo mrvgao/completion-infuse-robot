@@ -140,6 +140,7 @@ class BC(PolicyAlgo):
             del batch['obs']['progresses']
 
             if self.axuiliary_completion_mapping_nets.hidden_mapping_size > 0:
+                self.optimizers["policy"].zero_grad(set_to_none=True)
                 completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb)
                 completion_embedding = completion_embedding.unsqueeze(1).repeat(1, timestep, 1)
             else:
