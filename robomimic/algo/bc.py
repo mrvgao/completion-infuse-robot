@@ -852,7 +852,7 @@ class BC_Transformer_GMM(BC_Transformer):
         self.nets = self.nets.float().to(self.device)
 
         if self.algo_config.progress_dim_size > 0:
-            self.axuiliary_completion_mapping_nets = CompletionEstimationModelComplicationVersion(
+            self.axuiliary_completion_mapping_nets = CompletionTaskEmbeddingModel(
                 self.algo_config.lang_embed_dim,
                 self.algo_config.progress_dim_size,
                 self.algo_config.transformer.embed_dim,
