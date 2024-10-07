@@ -2,7 +2,6 @@ import base64
 import requests
 import cv2
 
-# OpenAI API Key
 api_key = ""
 
 # Function to encode the image
