@@ -3,7 +3,7 @@ import requests
 import cv2
 
 # OpenAI API Key
-api_key = "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"
+api_key = ""
 
 # Function to encode the image
 def encode_image(image_path):
