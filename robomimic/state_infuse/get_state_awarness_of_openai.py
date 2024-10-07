@@ -16,8 +16,10 @@ def change_ndarray_to_base64(image):
     return img_str
 
 
-def get_internal_state_form_openai(image, step, horizon, task):
-    base64_image = change_ndarray_to_base64(image)
+def get_internal_state_form_openai(image_left, image_hand, image_right, step, horizon, task):
+    base64_image_left = change_ndarray_to_base64(image_left)
+    base64_image_hand = change_ndarray_to_base64(image_hand)
+    base64_image_right = change_ndarray_to_base64(image_right)
 
     headers = {
       "Content-Type": "application/json",
@@ -40,10 +42,24 @@ def get_internal_state_form_openai(image, step, horizon, task):
             {
               "type": "image_url",
               "image_url": {
-                "url": f"data:image/jpeg;base64,{base64_image}",
+                "url": f"data:image/jpeg;base64,{base64_image_left}",
                 "detail": "high"
               }
-            }
+            },
+            {
+                  "type": "image_url",
+                  "image_url": {
+                      "url": f"data:image/jpeg;base64,{base64_image_hand}",
+                      "detail": "high"
+                  }
+              },
+              {
+                  "type": "image_url",
+                  "image_url": {
+                      "url": f"data:image/jpeg;base64,{base64_image_right}",
+                      "detail": "high"
+                  }
+              }
           ]
         }
       ],
