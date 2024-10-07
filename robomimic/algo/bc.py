@@ -148,6 +148,7 @@ class BC(PolicyAlgo):
                 left_image = first_frame_left_images[index].cpu().numpy()
                 hand_image = first_frame_hand_images[index].cpu().numpy()
                 right_image = first_frame_right_images[index].cpu().numpy()
+                task_str = batch['task_str']
 
                 internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, "pick and place")
 
