@@ -17,7 +17,7 @@ import robomimic.utils.obs_utils as ObsUtils
 from robomimic.macros import LANG_EMB_KEY
 
 from robomimic.algo import register_algo_factory_func, PolicyAlgo
-from robomimic.completion_infuse.completion_estimation import CompletionTaskEmbeddingModel, CompletionEstimationModelComplicationVersion
+from robomimic.state_infuse.state_estimator_model import CompletionTaskEmbeddingModel, CompletionEstimationModelComplicationVersion
 
 
 @register_algo_factory_func("bc")
@@ -140,7 +140,7 @@ class BC(PolicyAlgo):
             del batch['obs']['progresses']
 
             if self.axuiliary_completion_mapping_nets and self.axuiliary_completion_mapping_nets.hidden_mapping_size > 0:
-                self.optimizers["policy"].zero_grad(set_to_none=True)
+                # self.optimizers["policy"].zero_grad(set_to_none=True)
                 completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb)
                 completion_embedding = completion_embedding.unsqueeze(1).repeat(1, timestep, 1)
             else:
@@ -158,10 +158,10 @@ class BC(PolicyAlgo):
                 losses['action_loss'].backward()
                 self.completion_task_embedding_optimizer.step()
                 self.schedulers_for_completion_task_embedding.step(losses['action_loss'])
-            else:
-                if not validate:
-                    step_info = self._train_step(losses)
-                    info.update(step_info)
+
+            if not validate:
+                step_info = self._train_step(losses)
+                info.update(step_info)
 
         return info
 

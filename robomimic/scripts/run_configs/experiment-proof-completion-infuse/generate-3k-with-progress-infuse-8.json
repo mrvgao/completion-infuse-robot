@@ -3,7 +3,7 @@
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/model_epoch_10.pth",
     "cuda_mark": "cuda:5",
     "experiment": {
-        "name": "TASL-3k-infuse-progress-8",
+        "name": "TASL-3k-infuse-progress-8-whole-finetune",
         "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-0/TASL-3k-without-completion-infuse/20241003220455/models/model_epoch_1000.pth",
         "validate": false,
         "only_rollout": false,

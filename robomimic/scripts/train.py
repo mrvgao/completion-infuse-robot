@@ -41,7 +41,7 @@ import robomimic.utils.lang_utils as LangUtils
 from robomimic.config import config_factory
 from robomimic.algo import algo_factory, RolloutPolicy
 from robomimic.utils.log_utils import PrintLogger, DataLogger, flush_warnings
-from robomimic.completion_infuse.progress_predict_model import ValueResNetWithAttnPerformance
+from robomimic.state_infuse.progress_predict_model import ValueResNetWithAttnPerformance
 
 
 def train(config, device):
