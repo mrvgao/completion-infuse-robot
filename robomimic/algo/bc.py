@@ -151,7 +151,7 @@ class BC(PolicyAlgo):
                 task_str = batch['task_str'][index]
 
                 internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, task_str)
-                print(internal_state)
+                print(f'task {index} : {task_str}', internal_state)
 
                 # completion_task_embedding = CompletionTaskEmbeddingModel(internal_state, current_completion[index], current_task_emb[index])
                 # completion_task_embedding = completion_task_embedding.to(self.device)
