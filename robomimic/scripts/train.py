@@ -425,8 +425,6 @@ def train(config, device):
                 action_normalization_stats=action_normalization_stats,
             )
 
-            ## TODO Add save axuiliary_completion_mapping_nets
-
             ckpt_path = os.path.join(ckpt_dir, epoch_ckpt_name + "_compltion_infuse.pth")
             print("Saving axuiliary model to {}".format(ckpt_path))
             model.axuiliary_completion_mapping_nets.save_model(ckpt_path)
