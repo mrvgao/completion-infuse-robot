@@ -2,6 +2,7 @@ import base64
 import requests
 import cv2
 
+api_key = "sk-..."
 
 # Function to encode the image
 def encode_image(image_path):
