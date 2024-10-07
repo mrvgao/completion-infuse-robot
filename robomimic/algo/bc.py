@@ -18,6 +18,7 @@ from robomimic.macros import LANG_EMB_KEY
 
 from robomimic.algo import register_algo_factory_func, PolicyAlgo
 from robomimic.state_infuse.state_estimator_model import CompletionTaskEmbeddingModel, CompletionEstimationModelComplicationVersion
+from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
 
 
 @register_algo_factory_func("bc")
@@ -136,6 +137,8 @@ class BC(PolicyAlgo):
             current_task_emb = batch['obs'][LANG_EMB_KEY][:, 0, :]
 
             timestep = batch['obs'][LANG_EMB_KEY].size()[1]
+
+            import pdb; pdb.set_trace()
 
             del batch['obs']['progresses']
 
