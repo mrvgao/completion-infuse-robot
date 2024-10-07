@@ -1,6 +1,7 @@
 import base64
 import requests
 import cv2
+import numpy as np
 
 api_key = "sk-..."
 
@@ -11,7 +12,8 @@ def encode_image(image_path):
 
 def change_ndarray_to_base64(image):
     # Convert the image to base64
-    _, buffer = cv2.imencode('.jpg', image)
+    image = np.transpose(image, (1, 2, 0))
+    _, buffer = cv2.imencode('.png', image)
     img_str = base64.b64encode(buffer).decode('utf-8')
     return img_str
 
