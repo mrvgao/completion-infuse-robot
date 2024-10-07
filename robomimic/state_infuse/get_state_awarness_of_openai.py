@@ -38,7 +38,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
                 "content": [
                     {
                         "type": "text",
-                        "text": open('configs/task_description.txt', 'r').read().replace('\n', '').format(
+                        "text": open('./configs/task_description.txt', 'r').read().replace('\n', '').format(
                             {'task': task, 'step': step, 'horizon': horizon})
                     },
                     {
@@ -70,8 +70,11 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
         "top_p": 1.0,
     }
 
-    response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
+    try:
+        response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-    import pdb; pdb.set_trace()
+        import pdb; pdb.set_trace()
 
-    return response.json()['choices'][0]['message']['content']
+        return response.json()['choices'][0]['message']['content']
+    except Exception as e:
+        return None
