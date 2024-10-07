@@ -3,19 +3,12 @@ import requests
 import cv2
 
 # OpenAI API Key
-api_key = "YOUR_OPENAI_API_KEY"
+api_key = "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"
 
 # Function to encode the image
 def encode_image(image_path):
   with open(image_path, "rb") as image_file:
     return base64.b64encode(image_file.read()).decode('utf-8')
-
-# Path to your image
-image_path = "path_to_your_image.jpg"
-
-# Getting the base64 string
-base64_image = encode_image(image_path)
-
 
 def change_ndarray_to_base64(image):
     # Convert the image to base64
