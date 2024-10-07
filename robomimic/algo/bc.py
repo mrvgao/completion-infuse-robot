@@ -5,11 +5,9 @@ from collections import OrderedDict
 
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.distributions as D
 
 import robomimic.models.base_nets as BaseNets
-import robomimic.models.obs_nets as ObsNets
 import robomimic.models.policy_nets as PolicyNets
 import robomimic.models.vae_nets as VAENets
 import robomimic.utils.loss_utils as LossUtils
@@ -19,7 +17,7 @@ import robomimic.utils.obs_utils as ObsUtils
 from robomimic.macros import LANG_EMB_KEY
 
 from robomimic.algo import register_algo_factory_func, PolicyAlgo
-from robomimic.completion_estimation import CompletionTaskEmbeddingModel
+from robomimic.completion_infuse.completion_estimation import CompletionTaskEmbeddingModel
 
 
 @register_algo_factory_func("bc")
@@ -859,6 +857,8 @@ class BC_Transformer_GMM(BC_Transformer):
         )
 
         self.axuiliary_completion_mapping_nets = self.axuiliary_completion_mapping_nets.float().to(self.device)
+
+        self.axuiliary_completion_mapping_nets.train() # set model to train
 
         initialize_weights(self.axuiliary_completion_mapping_nets, lower_bound=-0.1, upper_bound=0.1)
 

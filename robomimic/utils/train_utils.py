@@ -472,6 +472,8 @@ def rollout_with_stats(
         verbose=False,
         del_envs_after_rollouts=False,
         data_logger=None,
+        progress_model=None,
+        with_progress_correct=False,
     ):
     """
     A helper function used in the train loop to conduct evaluation rollouts per environment

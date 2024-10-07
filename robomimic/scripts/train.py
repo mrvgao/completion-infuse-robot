@@ -41,6 +41,7 @@ import robomimic.utils.lang_utils as LangUtils
 from robomimic.config import config_factory
 from robomimic.algo import algo_factory, RolloutPolicy
 from robomimic.utils.log_utils import PrintLogger, DataLogger, flush_warnings
+from robomimic.completion_infuse.progress_predict_model import ValueResNetWithAttnPerformance
 
 
 def train(config, device):
@@ -180,6 +181,14 @@ def train(config, device):
     print(model)  # print model summary
     print("")
 
+    if config.experiment.only_rollout:
+        target_value_model = ValueResNetWithAttnPerformance()
+        target_value_model.load_state_dict(torch.load(config.value_model_path))
+        target_value_model.to(device)
+        target_value_model.eval()
+    else:
+        target_value_model = None
+
     # load training data
     lang_encoder = LangUtils.LangEncoder(
         device=device,
@@ -246,7 +255,7 @@ def train(config, device):
     valid_num_steps = config.experiment.validation_epoch_every_n_steps
 
     for epoch in range(0, config.train.num_epochs + 1): # epoch numbers start at 1
-        if epoch > 0:
+        if epoch > 0 and not config.experiment.only_rollout:
             step_log = TrainUtils.run_epoch(
                 model=model,
                 data_loader=train_loader,
@@ -335,6 +344,8 @@ def train(config, device):
                 terminate_on_success=config.experiment.rollout.terminate_on_success,
                 del_envs_after_rollouts=True,
                 data_logger=data_logger,
+                progress_model=target_value_model,
+                with_progress_correct=config.experiment.rollout.with_progress_correct,
             )
 
             #### move this code to rollout_with_stats function to log results one by one ####
@@ -413,6 +424,12 @@ def train(config, device):
                 obs_normalization_stats=obs_normalization_stats,
                 action_normalization_stats=action_normalization_stats,
             )
+
+            ## TODO Add save axuiliary_completion_mapping_nets
+
+            ckpt_path = os.path.join(ckpt_dir, epoch_ckpt_name + "_compltion_infuse.pth")
+            print("Saving axuiliary model to {}".format(ckpt_path))
+            model.axuiliary_completion_mapping_nets.save_model(ckpt_path)
 
         # Finally, log memory usage in MB
         process = psutil.Process(os.getpid())
