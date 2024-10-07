@@ -17,7 +17,7 @@ import robomimic.utils.obs_utils as ObsUtils
 from robomimic.macros import LANG_EMB_KEY
 
 from robomimic.algo import register_algo_factory_func, PolicyAlgo
-from robomimic.completion_infuse.completion_estimation import CompletionTaskEmbeddingModel
+from robomimic.completion_infuse.completion_estimation import CompletionTaskEmbeddingModel, CompletionEstimationModelComplicationVersion
 
 
 @register_algo_factory_func("bc")
@@ -851,7 +851,7 @@ class BC_Transformer_GMM(BC_Transformer):
         self._set_params_from_config()
         self.nets = self.nets.float().to(self.device)
 
-        self.axuiliary_completion_mapping_nets = CompletionTaskEmbeddingModel(
+        self.axuiliary_completion_mapping_nets = CompletionEstimationModelComplicationVersion(
             self.algo_config.lang_embed_dim,
             self.algo_config.progress_dim_size,
             self.algo_config.transformer.embed_dim,
