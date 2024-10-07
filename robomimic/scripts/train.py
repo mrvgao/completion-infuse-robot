@@ -427,7 +427,7 @@ def train(config, device):
 
             ckpt_path = os.path.join(ckpt_dir, epoch_ckpt_name + "_compltion_infuse.pth")
             print("Saving axuiliary model to {}".format(ckpt_path))
-            model.axuiliary_completion_mapping_nets.save_model(ckpt_path)
+            torch.save(model.axuiliary_completion_mapping_nets.state_dict(), ckpt_path)
 
         # Finally, log memory usage in MB
         process = psutil.Process(os.getpid())
