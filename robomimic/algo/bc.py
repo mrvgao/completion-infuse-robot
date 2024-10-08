@@ -186,6 +186,7 @@ class BC(PolicyAlgo):
                         else:
                             return np.zeros(self.openai_emb_size)
                     except Exception as e:
+                        print(e)
                         return np.zeros(self.openai_emb_size)
 
             with concurrent.futures.ThreadPoolExecutor() as executor:
