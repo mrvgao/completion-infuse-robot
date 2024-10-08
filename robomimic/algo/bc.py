@@ -149,6 +149,8 @@ class BC(PolicyAlgo):
             internal_states_string_from_openai = []
             internal_states_embedding_from_openai = []
 
+            f = open('robomimic/state_infuse/logs/fetching_log.txt', 'a')
+
             for index in range(batch_size):
                 left_image = first_frame_left_images[index].cpu().numpy()
                 hand_image = first_frame_hand_images[index].cpu().numpy()
@@ -156,8 +158,11 @@ class BC(PolicyAlgo):
                 task_str = batch['task_str'][index]
 
                 internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, task_str)
-                print(f'task {index} : {task_str}', internal_state)
+                openai_response = f'task {index} : {task_str} : {internal_state}'
+                f.write(openai_response + '\n')
                 internal_states_string_from_openai.append(internal_state)
+
+            f.close()
 
             for index in range(batch_size):
                 if internal_states_string_from_openai[index] is None:
