@@ -5,7 +5,11 @@ import numpy as np
 import openai
 import json
 
-api_key = "sk-gSSpUSVjIBw6ka_8nf7jbiB2ycvjAKh_B0TYWmtwtdT3BlbkFJ9o49NWt4TRYDVsHM48rlX02tq4k3LAICUo3rSKfkwA"
+try:
+    api_key = open('robomimic/state_infuse/configs/openai.key', 'r').read().replace('\n', "")
+except FileNotFoundError as e:
+    api_key = open('configs/openai.key', 'r').read().replace('\n', "")
+
 
 openai.api_key = api_key
 
