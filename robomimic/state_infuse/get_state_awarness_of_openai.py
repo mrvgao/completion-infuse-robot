@@ -97,6 +97,7 @@ def get_embeddings(strings, model):
     }
 
     for string in strings:
+        print(f"Getting embedding for: {string}")
         data = {
             "model": model,
             "input": string
