@@ -78,6 +78,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
 
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
+        print(e)
         return None
 
 

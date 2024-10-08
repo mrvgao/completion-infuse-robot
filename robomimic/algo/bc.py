@@ -159,6 +159,7 @@ class BC(PolicyAlgo):
 
                 internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, task_str)
                 openai_response = f'task {index} : {task_str} : {internal_state}'
+                print(internal_state)
                 f.write(openai_response + '\n')
                 internal_states_string_from_openai.append(internal_state)
 
