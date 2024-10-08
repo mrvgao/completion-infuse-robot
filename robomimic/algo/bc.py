@@ -160,6 +160,7 @@ class BC(PolicyAlgo):
                 if self.total_step % 10 == 0:
                     internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, task_str)
                     openai_response = f'task {index} : {task_str} : {internal_state}'
+                    print(openai_response)
                     f.write(openai_response + '\n')
                 else:
                     internal_state = None
