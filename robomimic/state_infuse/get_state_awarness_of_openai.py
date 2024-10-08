@@ -5,7 +5,7 @@ import numpy as np
 import openai
 import json
 
-api_key = "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"
+api_key = "sk--FjMmmAw3sLhtHoGfcZ1eIp41M_idswIZpT46YubVvT3BlbkFJfoBJG-oZNE-rl_5CKWpG6e96RM6Ejd1h6VEHIebtgA"
 
 openai.api_key = api_key
 
