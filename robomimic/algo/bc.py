@@ -167,6 +167,8 @@ class BC(PolicyAlgo):
 
             f.close()
 
+            self.total_step += 1
+
             for index in range(batch_size):
                 if internal_states_string_from_openai[index] is None:
                     internal_states_embedding_from_openai.append(np.zeros(self.openai_emb_size))
@@ -921,6 +923,8 @@ class BC_Transformer_GMM(BC_Transformer):
             )
         else:
             self.axuiliary_completion_mapping_nets = None
+
+        self.total_step = 0
 
     def _forward_training(self, batch, epoch=None, completion_embedding=None):
         """
