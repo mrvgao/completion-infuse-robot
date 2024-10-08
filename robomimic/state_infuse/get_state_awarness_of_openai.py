@@ -52,21 +52,21 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
                         "type": "image_url",
                         "image_url": {
                             "url": f"data:image/jpeg;base64,{base64_image_left}",
-                            "detail": "high"
+                            # "detail": "high"
                         }
                     },
                     {
                         "type": "image_url",
                         "image_url": {
                             "url": f"data:image/jpeg;base64,{base64_image_hand}",
-                            "detail": "high"
+                            # "detail": "high"
                         }
                     },
                     {
                         "type": "image_url",
                         "image_url": {
                             "url": f"data:image/jpeg;base64,{base64_image_right}",
-                            "detail": "high"
+                            # "detail": "high"
                         }
                     }
                 ]
