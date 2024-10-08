@@ -168,6 +168,8 @@ class BC(PolicyAlgo):
 
             f.close()
 
+            print('total step: ', self.total_step)
+
             self.total_step += 1
 
             for index in range(batch_size):
