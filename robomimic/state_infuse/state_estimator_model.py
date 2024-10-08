@@ -168,18 +168,18 @@ class CompletionTaskEmbeddingModel(nn.Module):
 if __name__ == '__main__':
 
     # Example usage:
-    input_dim_s = 768  # Dimension of the sentence embedding 's'
+    input_dim_s = 784  # Dimension of the sentence embedding 's'
     d = 128  # Dimension for the intermediate mapping
     V = 512  # Final output dimension
 
-    model = CompletionEstimationWithStateDescription(input_dim_s, d, V, state_descp_size=100)
+    model = CompletionEstimationWithStateDescription(input_dim_s, d, V, state_descp_size=1536)
 
     # Example input data
     batch_size = 16
     time_steps = 10
     p = torch.randn(batch_size, 1)  # Example scalar 'p' for each time step
     s = torch.randn(batch_size, input_dim_s)  # Example sentence embeddings 's'
-    sd = torch.randn(batch_size, 100)  # Example state descriptions 'sd'
+    sd = torch.randn(batch_size, 1536)  # Example state descriptions 'sd'
 
     print(p.size())
     print(s.size())

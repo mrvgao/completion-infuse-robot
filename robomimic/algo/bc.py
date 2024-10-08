@@ -171,7 +171,7 @@ class BC(PolicyAlgo):
 
                     internal_states_embedding_from_openai.append(emb)
 
-            embedding_tensor_from_openai = torch.tensor(internal_states_embedding_from_openai).to(self.device)
+            embedding_tensor_from_openai = torch.tensor(internal_states_embedding_from_openai).to(self.device).astype(torch.float32)
 
             import pdb; pdb.set_trace()
 
