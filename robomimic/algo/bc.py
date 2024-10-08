@@ -2,6 +2,7 @@
 Implementation of Behavioral Cloning (BC).
 """
 from collections import OrderedDict
+import concurrent.futures
 
 import numpy as np
 import torch
@@ -146,47 +147,52 @@ class BC(PolicyAlgo):
 
             batch_size = first_frame_right_images.size()[0]
 
-            internal_states_string_from_openai = []
-            internal_states_embedding_from_openai = []
-
-            f = open('robomimic/state_infuse/logs/fetching_log.txt', 'a')
-
-            for index in range(batch_size):
+            def process_index(index):
                 left_image = first_frame_left_images[index].cpu().numpy()
                 hand_image = first_frame_hand_images[index].cpu().numpy()
                 right_image = first_frame_right_images[index].cpu().numpy()
                 task_str = batch['task_str'][index]
 
                 if self.total_step % 10 == 0:
-                    internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, task_str)
+                    internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep,
+                                                                    task_str)
                     openai_response = f'task {index} : {task_str} : {internal_state}'
                     print(openai_response)
-                    f.write(openai_response + '\n')
+                    with open('output.txt', 'a') as f:
+                        f.write(openai_response + '\n')
                 else:
                     internal_state = None
-                internal_states_string_from_openai.append(internal_state)
 
-            f.close()
+                return internal_state
 
-            print('total step: ', self.total_step)
+            # Use ThreadPoolExecutor for parallel processing
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                # Create a list of tasks for the executor
+                results = list(executor.map(process_index, range(batch_size)))
+
+            internal_states_string_from_openai = list(results)
 
             self.total_step += 1
 
-            for index in range(batch_size):
+            def process_index(index):
                 if internal_states_string_from_openai[index] is None:
-                    internal_states_embedding_from_openai.append(np.zeros(self.openai_emb_size))
+                    return np.zeros(self.openai_emb_size)
                 else:
                     try:
-                        emb = get_openai_embedding([internal_states_string_from_openai[index]], 'text-embedding-3-small')
+                        emb = get_openai_embedding([internal_states_string_from_openai[index]],
+                                                   'text-embedding-3-small')
                         if emb:
-                            emb = emb[0]
+                            return emb[0]
                         else:
-                            emb = np.zeros(self.openai_emb_size)
+                            return np.zeros(self.openai_emb_size)
                     except Exception as e:
-                        emb = np.zeros(self.openai_emb_size)
+                        return np.zeros(self.openai_emb_size)
 
-                    internal_states_embedding_from_openai.append(emb)
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                # Map the function to each index in parallel
+                results = list(executor.map(process_index, range(batch_size)))
 
+            internal_states_embedding_from_openai = list(results)
             embedding_tensor_from_openai = torch.tensor(internal_states_embedding_from_openai).to(self.device).to(torch.float)
 
             del batch['obs']['progresses']
