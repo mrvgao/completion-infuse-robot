@@ -81,13 +81,6 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
         return None
 
 
-def get_embeddings(strings):
-    headers = {
-        "Content-Type": "application/json",
-        "Authorization": f"Bearer {api_key}"
-    }
-
-
 # Function to get embeddings for multiple strings
 def get_embeddings(strings, model):
     embeddings = []
