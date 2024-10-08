@@ -111,3 +111,4 @@ class BCConfig(BaseConfig):
 
         self.algo.progress_dim_size = 0
         self.algo.lang_embed_dim = 768
+        self.algo.openai_emb_size = 1536

@@ -2,9 +2,12 @@ import base64
 import requests
 import cv2
 import numpy as np
+import openai
+import json
 
-api_key = "sk-..."
+api_key = "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"
 
+openai.api_key = api_key
 
 # Function to encode the image
 def encode_image(image_path):
@@ -78,3 +81,55 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
         return None
+
+
+def get_embeddings(strings):
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+
+
+# Function to get embeddings for multiple strings
+def get_embeddings(strings, model):
+    embeddings = []
+    url = "https://api.openai.com/v1/embeddings"
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    for string in strings:
+        data = {
+            "model": model,
+            "input": string
+        }
+        response = requests.post(url, headers=headers, data=json.dumps(data))
+
+        if response.status_code == 200:
+            embedding = response.json()['data'][0]['embedding']
+            embeddings.append(np.array(embedding))
+        else:
+            print(f"Error: {response.status_code} - {response.text}")
+            embeddings.append(None)
+    return embeddings
+
+
+if __name__ == '__main__':
+    # Call the function and get embeddings
+    # List of strings you want to get embeddings for
+    strings = [
+        "The quick brown fox jumps over the lazy dog.",
+        "A journey of a thousand miles begins with a single step.",
+        "To be or not to be, that is the question."
+    ]
+
+    # Choose the embedding model, e.g., "text-embedding-ada-002"
+    model = "text-embedding-ada-002"
+
+    embeddings = get_embeddings(strings, model)
+
+    # Print the embedding for each string
+    for i, embedding in enumerate(embeddings):
+        print(f"Embedding for string {i + 1}: {embedding[:5]}... (truncated for brevity)")

@@ -15,7 +15,7 @@ class CompletionEstimationWithStateDescription(nn.Module):
         self.map_state_descp_to_vector = nn.Linear(state_descp_size, hidden_mapping_size)
 
         # Linear layer to merge task embedding, completion rate embedding, and state description embedding
-        self.merge_info = nn.Linear(hidden_mapping_size * 3 + task_str_emb_size, hidden_mapping_size)
+        self.merge_info = nn.Linear(hidden_mapping_size * 2 + task_str_emb_size, hidden_mapping_size)
 
         # Additional linear layers for added depth
         self.hidden_layer_1 = nn.Linear(hidden_mapping_size, hidden_mapping_size)
@@ -172,16 +172,17 @@ if __name__ == '__main__':
     d = 128  # Dimension for the intermediate mapping
     V = 512  # Final output dimension
 
-    model = CompletionEstimationModelComplicationVersion(input_dim_s, d, V)
+    model = CompletionEstimationWithStateDescription(input_dim_s, d, V, state_descp_size=100)
 
     # Example input data
     batch_size = 16
     time_steps = 10
     p = torch.randn(batch_size, 1)  # Example scalar 'p' for each time step
     s = torch.randn(batch_size, input_dim_s)  # Example sentence embeddings 's'
+    sd = torch.randn(batch_size, 100)  # Example state descriptions 'sd'
 
     print(p.size())
     print(s.size())
     # Forward pass
-    output = model(p, s)
+    output = model(p, s, sd)
     print(output.shape)  # Output shape: [batch_size, time_steps, V]

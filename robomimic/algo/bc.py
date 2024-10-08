@@ -3,6 +3,7 @@ Implementation of Behavioral Cloning (BC).
 """
 from collections import OrderedDict
 
+import numpy as np
 import torch
 import torch.nn as nn
 import torch.distributions as D
@@ -17,8 +18,9 @@ import robomimic.utils.obs_utils as ObsUtils
 from robomimic.macros import LANG_EMB_KEY
 
 from robomimic.algo import register_algo_factory_func, PolicyAlgo
-from robomimic.state_infuse.state_estimator_model import CompletionTaskEmbeddingModel, CompletionEstimationModelComplicationVersion
+from robomimic.state_infuse.state_estimator_model import CompletionTaskEmbeddingModel, CompletionEstimationWithStateDescription
 from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
+from robomimic.state_infuse.get_state_awarness_of_openai import get_embeddings as get_openai_embedding
 
 
 @register_algo_factory_func("bc")
@@ -144,6 +146,9 @@ class BC(PolicyAlgo):
 
             batch_size = first_frame_right_images.size()[0]
 
+            internal_states_string_from_openai = []
+            internal_states_embedding_from_openai = []
+
             for index in range(batch_size):
                 left_image = first_frame_left_images[index].cpu().numpy()
                 hand_image = first_frame_hand_images[index].cpu().numpy()
@@ -152,13 +157,21 @@ class BC(PolicyAlgo):
 
                 internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, task_str)
                 print(f'task {index} : {task_str}', internal_state)
+                internal_states_string_from_openai.append(internal_state)
 
-                # completion_task_embedding = CompletionTaskEmbeddingModel(internal_state, current_completion[index], current_task_emb[index])
-                # completion_task_embedding = completion_task_embedding.to(self.device)
-                # completion_task_embedding = completion_task_embedding.float()
+            for index in range(batch_size):
+                if internal_states_string_from_openai[index] is None:
+                    internal_states_embedding_from_openai.append(np.zeros(self.openai_emb_size))
+                else:
+                    emb = get_openai_embedding(internal_states_string_from_openai[index], 'text-embedding-3-small')
+                    if emb:
+                        emb = emb[0]
+                    else:
+                        emb = np.zeros(self.openai_emb_size)
 
-                break
+                    internal_states_embedding_from_openai.append(emb)
 
+            embedding_tensor_from_openai = torch.tensor(internal_states_embedding_from_openai).to(self.device)
 
             import pdb; pdb.set_trace()
 
@@ -166,7 +179,7 @@ class BC(PolicyAlgo):
 
             if self.axuiliary_completion_mapping_nets and self.axuiliary_completion_mapping_nets.hidden_mapping_size > 0:
                 # self.optimizers["policy"].zero_grad(set_to_none=True)
-                completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb)
+                completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb, embedding_tensor_from_openai)
                 completion_embedding = completion_embedding.unsqueeze(1).repeat(1, timestep, 1)
             else:
                 completion_embedding = None
@@ -875,12 +888,14 @@ class BC_Transformer_GMM(BC_Transformer):
         )
         self._set_params_from_config()
         self.nets = self.nets.float().to(self.device)
+        self.openai_emb_size = self.algo_config.openai_emb_size
 
         if self.algo_config.progress_dim_size > 0:
-            self.axuiliary_completion_mapping_nets = CompletionTaskEmbeddingModel(
+            self.axuiliary_completion_mapping_nets = CompletionEstimationWithStateDescription(
                 self.algo_config.lang_embed_dim,
                 self.algo_config.progress_dim_size,
                 self.algo_config.transformer.embed_dim,
+                self.algo_config.openai_emb_size,
             )
 
             self.axuiliary_completion_mapping_nets = self.axuiliary_completion_mapping_nets.float().to(self.device)
