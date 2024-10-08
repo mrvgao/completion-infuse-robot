@@ -181,7 +181,7 @@ class BC(PolicyAlgo):
                     try:
                         emb = get_openai_embedding([internal_states_string_from_openai[index]],
                                                    'text-embedding-3-small')
-                        if emb:
+                        if emb and emb[0]:
                             return emb[0]
                         else:
                             return np.zeros(self.openai_emb_size)
