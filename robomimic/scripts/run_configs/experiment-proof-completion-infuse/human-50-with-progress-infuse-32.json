@@ -1,9 +1,9 @@
 {
     "algo_name": "bc",
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/model_epoch_10.pth",
-    "cuda_mark": "cuda:3",
+    "cuda_mark": "cuda:7",
     "experiment": {
-        "name": "TASL-human-50-infuse-progress-32-wholefinetune",
+        "name": "TASL-human-50-infuse-progress-32-with-openai",
         "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-0/TASL-human-50-without-completion-infuse/20241003220512/models/model_epoch_1000.pth",
         "validate": false,
         "only_rollout": false,
