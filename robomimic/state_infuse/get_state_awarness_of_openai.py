@@ -72,7 +72,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
                 ]
             }
         ],
-        "max_tokens": 300,
+        "max_tokens": 100,
         "temperature": 0.1,
         "top_p": 1.0,
     }
