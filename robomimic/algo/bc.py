@@ -170,8 +170,6 @@ class BC(PolicyAlgo):
 
             print('total step: ', self.total_step)
 
-            import pdb; pdb.set_trace()
-
             self.total_step += 1
 
             for index in range(batch_size):
