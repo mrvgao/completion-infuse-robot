@@ -157,10 +157,12 @@ class BC(PolicyAlgo):
                 right_image = first_frame_right_images[index].cpu().numpy()
                 task_str = batch['task_str'][index]
 
-                internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, task_str)
-                openai_response = f'task {index} : {task_str} : {internal_state}'
-                print(internal_state)
-                f.write(openai_response + '\n')
+                if self.total_step % 10 == 0:
+                    internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep, task_str)
+                    openai_response = f'task {index} : {task_str} : {internal_state}'
+                    f.write(openai_response + '\n')
+                else:
+                    internal_state = None
                 internal_states_string_from_openai.append(internal_state)
 
             f.close()
