@@ -39,7 +39,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
                     {
                         "type": "text",
                         "text": open('robomimic/state_infuse/configs/prompts.txt', 'r').read().replace('\n', '').format(
-                            {'task': task, 'step': step, 'horizon': horizon})
+                            **{'task': task, 'step': step, 'horizon': horizon})
                     },
                     {
                         "type": "image_url",
