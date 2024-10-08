@@ -196,6 +196,8 @@ class BC(PolicyAlgo):
             internal_states_embedding_from_openai = list(results)
             embedding_tensor_from_openai = torch.tensor(internal_states_embedding_from_openai).to(self.device).to(torch.float)
 
+            import pdb; pdb.set_trace()
+
             del batch['obs']['progresses']
 
             if self.axuiliary_completion_mapping_nets and self.axuiliary_completion_mapping_nets.hidden_mapping_size > 0:
