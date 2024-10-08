@@ -176,10 +176,13 @@ class BC(PolicyAlgo):
                 if internal_states_string_from_openai[index] is None:
                     internal_states_embedding_from_openai.append(np.zeros(self.openai_emb_size))
                 else:
-                    emb = get_openai_embedding([internal_states_string_from_openai[index]], 'text-embedding-3-small')
-                    if emb:
-                        emb = emb[0]
-                    else:
+                    try:
+                        emb = get_openai_embedding([internal_states_string_from_openai[index]], 'text-embedding-3-small')
+                        if emb:
+                            emb = emb[0]
+                        else:
+                            emb = np.zeros(self.openai_emb_size)
+                    except Exception as e:
                         emb = np.zeros(self.openai_emb_size)
 
                     internal_states_embedding_from_openai.append(emb)
