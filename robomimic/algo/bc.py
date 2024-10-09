@@ -233,7 +233,8 @@ class BC(PolicyAlgo):
                 results = list(executor.map(process_index, range(batch_size)))
 
             internal_states_embedding_from_openai = list(results)
-            embedding_tensor_from_openai = torch.tensor(internal_states_embedding_from_openai).to(self.device).to(torch.float)
+            internal_states_embedding_np = np.array(internal_states_embedding_from_openai)
+            embedding_tensor_from_openai = torch.tensor(internal_states_embedding_np).to(self.device).to(torch.float)
 
             del batch['obs']['progresses']
 
