@@ -42,7 +42,7 @@ from robomimic.config import config_factory
 from robomimic.algo import algo_factory, RolloutPolicy
 from robomimic.utils.log_utils import PrintLogger, DataLogger, flush_warnings
 from robomimic.state_infuse.progress_predict_model import ValueResNetWithAttnPerformance
-from robomimic.state_infuse.state_estimator_model import StateEstimatorModel
+from robomimic.state_infuse.state_estimator_model import CompletionEstimationWithStateDescription
 
 
 def train(config, device):
