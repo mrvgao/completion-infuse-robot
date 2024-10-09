@@ -23,6 +23,7 @@ def encode_image(image_path):
 def change_ndarray_to_base64(image, file_name='temp.png'):
     # Convert the image to base64
     image = (np.transpose(image, (1, 2, 0)) * 255).astype(np.uint8)
+    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     _, buffer = cv2.imencode('.png', image)
     img_str = base64.b64encode(buffer).decode('utf-8')
 

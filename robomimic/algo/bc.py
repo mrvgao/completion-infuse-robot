@@ -162,7 +162,7 @@ class BC(PolicyAlgo):
                 recording_dir = f'recording_{self.total_step}_{index}_{path_task_str}'
                 os.makedirs(recording_dir, exist_ok=True)
 
-                [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), (img.transpose(1, 2, 0) * 255).astype(np.uint8))
+                [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), cv2.cvtColor((img.transpose(1, 2, 0) * 255).astype(np.uint8), cv2.COLOR_RGB2BGR))
                  for i, img in enumerate([
                     left_image,
                     hand_image,
