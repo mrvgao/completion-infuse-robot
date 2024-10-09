@@ -211,11 +211,6 @@ class BC(PolicyAlgo):
 
             internal_states_string_from_openai = list(results)
 
-            self.total_step += 1
-
-            if self.total_step > 2:
-                sys.exit(0)
-
             def process_index(index):
                 if internal_states_string_from_openai[index] is None:
                     return np.zeros(self.openai_emb_size)
