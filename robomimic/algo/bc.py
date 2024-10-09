@@ -173,7 +173,6 @@ class BC(PolicyAlgo):
                             right_image])
                      ]
 
-                if self.total_step % 10 == 0:
                     internal_state = get_internal_state_form_openai(
                         left_image, hand_image, right_image,
                         task_complete_rate, task_str,
