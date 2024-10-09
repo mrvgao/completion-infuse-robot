@@ -157,19 +157,18 @@ class BC(PolicyAlgo):
                 right_image = first_frame_right_images[index].cpu().numpy()
                 task_str = batch['task_str'][index]
                 task_complete_rate = current_completion_batch[index].cpu().numpy()
+                task_complete_rate = task_complete_rate[0]
 
                 path_task_str = task_str.replace(' ', '_')
                 recording_dir = f'recording_{self.total_step}_{index}_{path_task_str}'
                 os.makedirs(recording_dir, exist_ok=True)
 
-                import pdb; pdb.set_trace()
-
                 [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), cv2.cvtColor((img.transpose(1, 2, 0) * 255).astype(np.uint8), cv2.COLOR_RGB2BGR))
-                 for i, img in enumerate([
-                    left_image,
-                    hand_image,
-                    right_image]
-                )]
+                    for i, img in enumerate([
+                        left_image,
+                        hand_image,
+                        right_image])
+                 ]
 
                 if self.total_step % 10 == 0:
                     internal_state = get_internal_state_form_openai(
