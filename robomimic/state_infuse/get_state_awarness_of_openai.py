@@ -46,7 +46,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, complete
                     {
                         "type": "text",
                         "text": open('robomimic/state_infuse/configs/prompts.txt', 'r').read().replace('\n', '').format(
-                            **{'task': task, 'complete_rare': complete_rate})
+                            **{'task': task, 'complete_rare': 100 * complete_rate})
                     },
                     {
                         "type": "image_url",
