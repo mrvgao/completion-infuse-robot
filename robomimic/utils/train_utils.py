@@ -366,7 +366,7 @@ def run_rollout(
                     left_image.cpu().numpy(),
                     hand_image.cpu().numpy(),
                     right_image.cpu().numpy(),
-                    step=step_num, horizon=horizon, task=task_str
+                    step=step_num, horizon=horizon, task=task_str,
                 )
 
                 emb_from_openai = get_openai_embeddings([internal_state])

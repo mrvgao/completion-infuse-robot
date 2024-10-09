@@ -176,7 +176,8 @@ class BC(PolicyAlgo):
                 if self.total_step % 10 == 0:
                     internal_state = get_internal_state_form_openai(
                         left_image, hand_image, right_image,
-                        task_complete_rate, task_str
+                        task_complete_rate, task_str,
+                        with_complete_rate=True, write_image=logging_openai_difference
                     )
 
                     if logging_openai_difference:
