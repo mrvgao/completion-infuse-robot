@@ -1,6 +1,7 @@
 """
 Implementation of Behavioral Cloning (BC).
 """
+import sys
 from collections import OrderedDict
 import concurrent.futures
 
@@ -23,6 +24,8 @@ from robomimic.state_infuse.state_estimator_model import CompletionTaskEmbedding
 from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
 from robomimic.state_infuse.get_state_awarness_of_openai import get_embeddings as get_openai_embedding
 import cv2
+import os
+import random
 
 
 @register_algo_factory_func("bc")
@@ -155,13 +158,40 @@ class BC(PolicyAlgo):
                 task_str = batch['task_str'][index]
                 task_complete_rate = current_completion_batch[index].cpu().numpy()
 
+                recording_dir = f'recording_{index}_{task_str}'
+                os.makedirs(recording_dir, exist_ok=True)
+
+                [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), img) for i, img in enumerate([
+                    left_image,
+                    hand_image,
+                    right_image]
+                )]
+
                 if self.total_step % 10 == 0:
                     internal_state = get_internal_state_form_openai(
                         left_image, hand_image, right_image,
                         task_complete_rate, task_str
                     )
 
-                    import pdb; pdb.set_trace()
+                    with open(os.path.join(recording_dir, 'openai_response_state_with_complete_rate.txt'), 'w') as f:
+                        f.write(internal_state)
+
+                    internal_state_wo = get_internal_state_form_openai(
+                        left_image, hand_image, right_image,
+                        0, task_str, with_complete_rate=False
+                    )
+
+                    with open(os.path.join(recording_dir, 'openai_response_state_without_complete_rate.txt'), 'w') as f:
+                        f.write(internal_state_wo)
+
+                    internal_state_rand = get_internal_state_form_openai(
+                        left_image, hand_image, right_image,
+                        random.random(), task_str, with_complete_rate=False
+                    )
+
+                    with open(os.path.join(recording_dir, 'openai_response_state_with_random_complete_rate.txt'), 'w') as f:
+                        f.write(internal_state_rand)
+
                     openai_response = f'task {index} : {task_str} : {internal_state}'
                     print(openai_response)
                     with open('output.txt', 'a') as f:
@@ -179,6 +209,9 @@ class BC(PolicyAlgo):
             internal_states_string_from_openai = list(results)
 
             self.total_step += 1
+
+            if self.total_step > 2:
+                sys.exit(0)
 
             def process_index(index):
                 if internal_states_string_from_openai[index] is None:

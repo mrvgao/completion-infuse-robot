@@ -4,6 +4,7 @@ import cv2
 import numpy as np
 import openai
 import json
+from robomimic.state_infuse.configs.prompts import prompt_configs
 
 try:
     api_key = open('robomimic/state_infuse/configs/openai.key', 'r').read().replace('\n', "")
@@ -27,7 +28,7 @@ def change_ndarray_to_base64(image):
     return img_str
 
 
-def get_internal_state_form_openai(image_left, image_hand, image_right, complete_rate, task):
+def get_internal_state_form_openai(image_left, image_hand, image_right, complete_rate, task, with_complete_rate=True):
     base64_image_left = change_ndarray_to_base64(image_left)
     base64_image_hand = change_ndarray_to_base64(image_hand)
     base64_image_right = change_ndarray_to_base64(image_right)
@@ -45,8 +46,9 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, complete
                 "content": [
                     {
                         "type": "text",
-                        "text": open('robomimic/state_infuse/configs/prompts.txt', 'r').read().replace('\n', '').format(
-                            **{'task': task, 'complete_rate': 100 * complete_rate})
+                        "text": prompt_configs['with_complete_rate'].format(**{'task': task, 'complete_rate': 100 * complete_rate})
+                                if with_complete_rate else
+                                prompt_configs['without_complete_rate'].format(**{'task': task})
                     },
                     {
                         "type": "image_url",
