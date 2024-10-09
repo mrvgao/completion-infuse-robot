@@ -161,7 +161,7 @@ class BC(PolicyAlgo):
                 recording_dir = f'recording_{index}_{task_str}'
                 os.makedirs(recording_dir, exist_ok=True)
 
-                [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), img) for i, img in enumerate([
+                [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), img.transpose(1, 2, 0)) for i, img in enumerate([
                     left_image,
                     hand_image,
                     right_image]
