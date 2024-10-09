@@ -87,11 +87,9 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, complete
     try:
         response = requests.post("https://api.openai.com/v1/chat/completions", headers=headers, json=payload)
 
-        import pdb; pdb.set_trace()
-
         return response.json()['choices'][0]['message']['content']
     except Exception as e:
-        print(e)
+        print('error in get openai state analysis', e)
         return None
 
 
