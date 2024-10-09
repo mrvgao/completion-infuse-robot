@@ -22,6 +22,7 @@ from robomimic.algo import register_algo_factory_func, PolicyAlgo
 from robomimic.state_infuse.state_estimator_model import CompletionTaskEmbeddingModel, CompletionEstimationWithStateDescription
 from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
 from robomimic.state_infuse.get_state_awarness_of_openai import get_embeddings as get_openai_embedding
+import cv2
 
 
 @register_algo_factory_func("bc")
