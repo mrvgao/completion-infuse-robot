@@ -161,6 +161,12 @@ class BC(PolicyAlgo):
                 task_complete_rate = current_completion_batch[index].cpu().numpy()
                 task_complete_rate = task_complete_rate[0]
 
+                internal_state = get_internal_state_form_openai(
+                        left_image, hand_image, right_image,
+                        task_complete_rate, task_str,
+                        with_complete_rate=True, write_image=logging_openai_difference
+                )
+
                 if logging_openai_difference:
                     path_task_str = task_str.replace(' ', '_')
                     recording_dir = f'recording_{self.total_step}_{index}_{path_task_str}'
@@ -173,36 +179,29 @@ class BC(PolicyAlgo):
                             right_image])
                      ]
 
-                    internal_state = get_internal_state_form_openai(
+                    with open(os.path.join(recording_dir, 'openai_response_state_with_complete_rate.txt'), 'w') as f:
+                        f.write(internal_state)
+
+                    internal_state_wo = get_internal_state_form_openai(
                         left_image, hand_image, right_image,
-                        task_complete_rate, task_str,
-                        with_complete_rate=True, write_image=logging_openai_difference
+                        0, task_str, with_complete_rate=False
                     )
 
-                    if logging_openai_difference:
-                        with open(os.path.join(recording_dir, 'openai_response_state_with_complete_rate.txt'), 'w') as f:
-                            f.write(internal_state)
+                    with open(os.path.join(recording_dir, 'openai_response_state_without_complete_rate.txt'), 'w') as f:
+                        f.write(internal_state_wo)
 
-                        internal_state_wo = get_internal_state_form_openai(
-                            left_image, hand_image, right_image,
-                            0, task_str, with_complete_rate=False
-                        )
+                    internal_state_rand = get_internal_state_form_openai(
+                        left_image, hand_image, right_image,
+                        random.random(), task_str, with_complete_rate=False
+                    )
 
-                        with open(os.path.join(recording_dir, 'openai_response_state_without_complete_rate.txt'), 'w') as f:
-                            f.write(internal_state_wo)
+                    with open(os.path.join(recording_dir, 'openai_response_state_with_random_complete_rate.txt'), 'w') as f:
+                        f.write(internal_state_rand)
 
-                        internal_state_rand = get_internal_state_form_openai(
-                            left_image, hand_image, right_image,
-                            random.random(), task_str, with_complete_rate=False
-                        )
-
-                        with open(os.path.join(recording_dir, 'openai_response_state_with_random_complete_rate.txt'), 'w') as f:
-                            f.write(internal_state_rand)
-
-                        openai_response = f'task {index} : {task_str} : {internal_state}'
-                        print(openai_response)
-                        with open('output.txt', 'a') as f:
-                            f.write(openai_response + '\n')
+                    openai_response = f'task {index} : {task_str} : {internal_state}'
+                    print(openai_response)
+                    with open('output.txt', 'a') as f:
+                        f.write(openai_response + '\n')
                 else:
                     internal_state = None
 
