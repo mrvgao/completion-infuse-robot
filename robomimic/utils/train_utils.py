@@ -27,6 +27,9 @@ from robomimic.envs.env_base import EnvBase
 from robomimic.envs.wrappers import EnvWrapper
 from robomimic.algo import RolloutPolicy
 from tianshou.env import SubprocVectorEnv
+from robomimic.state_infuse.get_state_awarness_of_openai import get_embeddings as get_openai_embeddings
+from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
+from torchvision import models, transforms
 
 
 def get_exp_dir(config, auto_remove_exp_dir=False):
@@ -258,6 +261,23 @@ def batchify_obs(obs_list):
     return obs
 
 
+class NumpyToTensor:
+    """Custom transform to convert a NumPy array directly to a PyTorch tensor."""
+    def __call__(self, img):
+        if isinstance(img, np.ndarray):
+            # Convert NumPy array (H x W x C) to PyTorch tensor (C x H x W)
+            img = torch.from_numpy(img).permute(2, 0, 1).float() / 255.0
+        return img
+
+
+resnet_transformer = transforms.Compose([
+    NumpyToTensor(),  # C
+    transforms.Resize((224, 224), antialias=True),
+    # transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+])
+
+
 def run_rollout(
         policy, 
         env, 
@@ -267,6 +287,9 @@ def run_rollout(
         video_writer=None,
         video_skip=5,
         terminate_on_success=False,
+        progress_provider=None,
+        state_mapping_model=None,
+        with_progress_correct=False,
     ):
     """
     Runs a rollout in an environment with the current network parameters.
@@ -328,6 +351,29 @@ def run_rollout(
             ac = policy(ob=policy_ob, goal=goal_dict, batched=True) #, return_ob=True)
         else:
             policy_ob = ob_dict
+            if with_progress_correct:
+                import pdb; pdb.set_trace()
+
+                left_image = resnet_transformer(ob_dict['robot0_agentview_left_image'][0])
+                hand_image = resnet_transformer(ob_dict['robot0_eye_in_hand_image'][0])
+                right_image = resnet_transformer(ob_dict['robot0_agentview_right_image'][0])
+                task_emb = torch.tensor(ob_dict['lang_emb'][0], dtype=torch.float32)
+
+                step_num = progress_provider(left_image, hand_image, right_image, task_emb)
+                task_str = env._ep_lang_str
+
+                internal_state = get_internal_state_form_openai(
+                    left_image.cpu().numpy(),
+                    hand_image.cpu().numpy(),
+                    right_image.cpu().numpy(),
+                    step=step_num, horizon=horizon, task=task_str
+                )
+
+                emb_from_openai = get_openai_embeddings([internal_state])
+                state_emb = state_mapping_model(task_str, step_num, emb_from_openai)
+                ac = policy(ob=policy_ob, goal=goal_dict, state_emb=state_emb)
+
+
             ac = policy(ob=policy_ob, goal=goal_dict) #, return_ob=True)
 
         # play action
@@ -473,6 +519,7 @@ def rollout_with_stats(
         del_envs_after_rollouts=False,
         data_logger=None,
         progress_model=None,
+        state_mapping_model=None,
         with_progress_correct=False,
     ):
     """
@@ -570,6 +617,9 @@ def rollout_with_stats(
                     video_writer=env_video_writer,
                     video_skip=video_skip,
                     terminate_on_success=terminate_on_success,
+                    progress_model=progress_model,
+                    state_mapping_model=state_mapping_model,
+                    with_progress_correct=with_progress_correct,
                 )
             except Exception as e:
                 print("Rollout exception at episode number {}!".format(ep_i))

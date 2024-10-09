@@ -136,8 +136,8 @@ class BC(PolicyAlgo):
                 that might be relevant for logging
         """
         with TorchUtils.maybe_no_grad(no_grad=validate):
-            current_completion = batch['obs']['progresses'][:, 0, :]
-            current_task_emb = batch['obs'][LANG_EMB_KEY][:, 0, :]
+            current_completion_batch = batch['obs']['progresses'][:, 0, :]
+            current_task_emb_batch = batch['obs'][LANG_EMB_KEY][:, 0, :]
 
             timestep = batch['obs'][LANG_EMB_KEY].size()[1]
 
@@ -152,10 +152,15 @@ class BC(PolicyAlgo):
                 hand_image = first_frame_hand_images[index].cpu().numpy()
                 right_image = first_frame_right_images[index].cpu().numpy()
                 task_str = batch['task_str'][index]
+                task_complete_rate = current_completion_batch[index].cpu().numpy()
 
                 if self.total_step % 10 == 0:
-                    internal_state = get_internal_state_form_openai(left_image, hand_image, right_image, 1, timestep,
-                                                                    task_str)
+                    internal_state = get_internal_state_form_openai(
+                        left_image, hand_image, right_image,
+                        task_complete_rate, task_str
+                    )
+
+                    import pdb; pdb.set_trace()
                     openai_response = f'task {index} : {task_str} : {internal_state}'
                     print(openai_response)
                     with open('output.txt', 'a') as f:
@@ -179,8 +184,7 @@ class BC(PolicyAlgo):
                     return np.zeros(self.openai_emb_size)
                 else:
                     try:
-                        emb = get_openai_embedding([internal_states_string_from_openai[index]],
-                                                   'text-embedding-3-small')
+                        emb = get_openai_embedding([internal_states_string_from_openai[index]])
                         if emb and emb[0] is not None:
                             return emb[0]
                         else:
@@ -200,7 +204,7 @@ class BC(PolicyAlgo):
 
             if self.axuiliary_completion_mapping_nets and self.axuiliary_completion_mapping_nets.hidden_mapping_size > 0:
                 # self.optimizers["policy"].zero_grad(set_to_none=True)
-                completion_embedding = self.axuiliary_completion_mapping_nets(current_completion, current_task_emb, embedding_tensor_from_openai)
+                completion_embedding = self.axuiliary_completion_mapping_nets(current_completion_batch, current_task_emb_batch, embedding_tensor_from_openai)
                 completion_embedding = completion_embedding.unsqueeze(1).repeat(1, timestep, 1)
             else:
                 completion_embedding = None

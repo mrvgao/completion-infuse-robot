@@ -42,6 +42,7 @@ from robomimic.config import config_factory
 from robomimic.algo import algo_factory, RolloutPolicy
 from robomimic.utils.log_utils import PrintLogger, DataLogger, flush_warnings
 from robomimic.state_infuse.progress_predict_model import ValueResNetWithAttnPerformance
+from robomimic.state_infuse.state_estimator_model import StateEstimatorModel
 
 
 def train(config, device):
@@ -182,12 +183,19 @@ def train(config, device):
     print("")
 
     if config.experiment.only_rollout:
-        target_value_model = ValueResNetWithAttnPerformance()
-        target_value_model.load_state_dict(torch.load(config.progress_model_path))
-        target_value_model.to(device)
-        target_value_model.eval()
+        progress_provider = ValueResNetWithAttnPerformance()
+        progress_provider.load_state_dict(torch.load(config.progress_model_path))
+        progress_provider.to(device)
+        progress_provider.eval()
+
+        state_mapping_model = StateEstimatorModel()
+        state_mapping_model.load_state_dict(torch.load(config.experiment.state_mapping_ckpt_path))
+        state_mapping_model.to(device)
+        state_mapping_model.eval()
+
     else:
-        target_value_model = None
+        progress_provider = None
+        state_mapping_model = None
 
     # load training data
     lang_encoder = LangUtils.LangEncoder(
@@ -344,7 +352,7 @@ def train(config, device):
                 terminate_on_success=config.experiment.rollout.terminate_on_success,
                 del_envs_after_rollouts=True,
                 data_logger=data_logger,
-                progress_model=target_value_model,
+                progress_model=progress_provider,
                 with_progress_correct=config.experiment.rollout.with_progress_correct,
             )
 

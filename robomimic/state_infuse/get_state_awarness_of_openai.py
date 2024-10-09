@@ -27,7 +27,7 @@ def change_ndarray_to_base64(image):
     return img_str
 
 
-def get_internal_state_form_openai(image_left, image_hand, image_right, step, horizon, task):
+def get_internal_state_form_openai(image_left, image_hand, image_right, complete_rate, task):
     base64_image_left = change_ndarray_to_base64(image_left)
     base64_image_hand = change_ndarray_to_base64(image_hand)
     base64_image_right = change_ndarray_to_base64(image_right)
@@ -46,7 +46,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
                     {
                         "type": "text",
                         "text": open('robomimic/state_infuse/configs/prompts.txt', 'r').read().replace('\n', '').format(
-                            **{'task': task, 'step': step, 'horizon': horizon})
+                            **{'task': task, 'complete_rare': complete_rate})
                     },
                     {
                         "type": "image_url",
@@ -87,7 +87,8 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, step, ho
 
 
 # Function to get embeddings for multiple strings
-def get_embeddings(strings, model):
+def get_embeddings(strings):
+    model = "text-embedding-ada-002"
     embeddings = []
     url = "https://api.openai.com/v1/embeddings"
 
@@ -118,14 +119,11 @@ if __name__ == '__main__':
     # List of strings you want to get embeddings for
     strings = [
         "The quick brown fox jumps over the lazy dog.",
-        "A journey of a thousand miles begins with a single step.",
-        "To be or not to be, that is the question."
     ]
 
     # Choose the embedding model, e.g., "text-embedding-ada-002"
-    model = "text-embedding-ada-002"
 
-    embeddings = get_embeddings(strings, model)
+    embeddings = get_embeddings(strings)
 
     # Print the embedding for each string
     for i, embedding in enumerate(embeddings):
