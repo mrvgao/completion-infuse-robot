@@ -159,10 +159,11 @@ class BC(PolicyAlgo):
                 task_complete_rate = current_completion_batch[index].cpu().numpy()
 
                 path_task_str = task_str.replace(' ', '_')
-                recording_dir = f'recording_{index}_{path_task_str}'
+                recording_dir = f'recording_{self.total_step}_{index}_{path_task_str}'
                 os.makedirs(recording_dir, exist_ok=True)
 
-                [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), img.transpose(1, 2, 0)) for i, img in enumerate([
+                [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), (img.transpose(1, 2, 0) * 255)).astype(np.uint8)
+                 for i, img in enumerate([
                     left_image,
                     hand_image,
                     right_image]

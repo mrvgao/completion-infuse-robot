@@ -20,18 +20,21 @@ def encode_image(image_path):
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-def change_ndarray_to_base64(image):
+def change_ndarray_to_base64(image, file_name='temp.png'):
     # Convert the image to base64
-    image = np.transpose(image, (1, 2, 0))
+    image = (np.transpose(image, (1, 2, 0)) * 255).astype(np.uint8)
     _, buffer = cv2.imencode('.png', image)
     img_str = base64.b64encode(buffer).decode('utf-8')
+
+    cv2.imwrite(file_name, cv2.imdecode(np.frombuffer(buffer, np.uint8), cv2.IMREAD_COLOR))
+
     return img_str
 
 
 def get_internal_state_form_openai(image_left, image_hand, image_right, complete_rate, task, with_complete_rate=True):
-    base64_image_left = change_ndarray_to_base64(image_left)
-    base64_image_hand = change_ndarray_to_base64(image_hand)
-    base64_image_right = change_ndarray_to_base64(image_right)
+    base64_image_left = change_ndarray_to_base64(image_left, task + f'_left_{complete_rate}.png')
+    base64_image_hand = change_ndarray_to_base64(image_hand, task + f'_hand_{complete_rate}.png')
+    base64_image_right = change_ndarray_to_base64(image_right, task + f'_right_{complete_rate}.png')
 
     headers = {
         "Content-Type": "application/json",
