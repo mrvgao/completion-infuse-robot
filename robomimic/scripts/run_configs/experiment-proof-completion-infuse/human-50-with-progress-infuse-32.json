@@ -5,7 +5,6 @@
     "experiment": {
         "name": "TASL-human-50-infuse-progress-32-with-openai-continue-train",
         "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-0/TASL-human-50-without-completion-infuse/20241003220512/models/model_epoch_1000.pth",
-        "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-32/TASL-human-50-infuse-progress-32-with-openai/20241009141848/models/model_epoch_10_compltion_infuse.pth",
         "validate": false,
         "only_rollout": false,
         "logging": {
@@ -225,7 +224,7 @@
         "goal_mode": null,
         "cuda": true,
         "batch_size": 16,
-        "num_epochs": 10,
+        "num_epochs": 20,
         "max_grad_norm": 100.0,
         "seed": 999,
         "action_config": {
