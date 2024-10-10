@@ -361,12 +361,15 @@ def run_rollout(
                 first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(1, 2, 0)).unsqueeze(0).to(policy.policy.device)
                 first_right_image_transformed = resnet_transformer(first_right_image.transpose(1, 2, 0)).unsqueeze(0).to(policy.policy.device)
 
-                complete_rate = policy.policy.progress_provider(
-                    first_left_image_transformed,
-                    first_hand_image_transformed,
-                    first_right_image_transformed,
-                    task_emb
-                )
+                # complete_rate = policy.policy.progress_provider(
+                #     first_left_image_transformed,
+                #     first_hand_image_transformed,
+                #     first_right_image_transformed,
+                #     task_emb
+                # )
+                complete_rate = step_i / horizon
+
+                # complete_rate = complete_rate[0][0].cpu().detach().numpy()
 
                 task_str = env._ep_lang_str
 
@@ -378,7 +381,14 @@ def run_rollout(
                 )
 
                 emb_from_openai = get_openai_embeddings([internal_state])
-                state_emb = policy.state_mapping_model(task_str, complete_rate, emb_from_openai)
+                internal_states_embedding_np = np.array(emb_from_openai)
+                embedding_tensor_from_openai = torch.tensor(internal_states_embedding_np).to(policy.policy.device).to(torch.float)
+
+                state_emb = policy.policy.state_mapping_model(
+                    task_emb, torch.Tensor([complete_rate]),
+                    embedding_tensor_from_openai
+                )
+
                 ac = policy(ob=policy_ob, goal=goal_dict, x_delta_emb=state_emb)
 
             # ac = policy(ob=policy_ob, goal=goal_dict) #, return_ob=True)
