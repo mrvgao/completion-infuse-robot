@@ -287,8 +287,6 @@ def run_rollout(
         video_writer=None,
         video_skip=5,
         terminate_on_success=False,
-        progress_provider=None,
-        state_mapping_model=None,
         with_progress_correct=False,
     ):
     """
@@ -359,7 +357,7 @@ def run_rollout(
                 right_image = resnet_transformer(ob_dict['robot0_agentview_right_image'][0])
                 task_emb = torch.tensor(ob_dict['lang_emb'][0], dtype=torch.float32)
 
-                step_num = progress_provider(left_image, hand_image, right_image, task_emb)
+                step_num = policy.progress_provider(left_image, hand_image, right_image, task_emb)
                 task_str = env._ep_lang_str
 
                 internal_state = get_internal_state_form_openai(
@@ -370,7 +368,7 @@ def run_rollout(
                 )
 
                 emb_from_openai = get_openai_embeddings([internal_state])
-                state_emb = state_mapping_model(task_str, step_num, emb_from_openai)
+                state_emb = policy.state_mapping_model(task_str, step_num, emb_from_openai)
                 ac = policy(ob=policy_ob, goal=goal_dict, state_emb=state_emb)
 
 
