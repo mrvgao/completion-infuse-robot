@@ -352,25 +352,34 @@ def run_rollout(
             if with_progress_correct:
                 import pdb; pdb.set_trace()
 
-                left_image = resnet_transformer(ob_dict['robot0_agentview_left_image'][0])
-                hand_image = resnet_transformer(ob_dict['robot0_eye_in_hand_image'][0])
-                right_image = resnet_transformer(ob_dict['robot0_agentview_right_image'][0])
-                task_emb = torch.tensor(ob_dict['lang_emb'][0], dtype=torch.float32)
+                first_left_image = ob_dict['robot0_agentview_left_image'][0]
+                first_hand_image = ob_dict['robot0_eye_in_hand_image'][0]
+                first_right_image = ob_dict['robot0_agentview_right_image'][0]
+                task_emb = policy._ep_lang_emb
 
-                step_num = policy.progress_provider(left_image, hand_image, right_image, task_emb)
+                first_right_image_transformed = resnet_transformer(first_right_image.transpose(1, 2, 0))
+                first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(1, 2, 0))
+                first_left_image_transformed = resnet_transformer(first_left_image.transpose(1, 2, 0))
+
+                step_num = policy.policy.progress_provider(
+                    first_left_image_transformed,
+                    first_hand_image_transformed,
+                    first_right_image_transformed,
+                    task_emb
+                )
+
                 task_str = env._ep_lang_str
 
                 internal_state = get_internal_state_form_openai(
-                    left_image.cpu().numpy(),
-                    hand_image.cpu().numpy(),
-                    right_image.cpu().numpy(),
+                    first_left_image_transformed.cpu().numpy(),
+                    first_hand_image_transformed.cpu().numpy(),
+                    first_right_image_transformed.cpu().numpy(),
                     step=step_num, horizon=horizon, task=task_str,
                 )
 
                 emb_from_openai = get_openai_embeddings([internal_state])
                 state_emb = policy.state_mapping_model(task_str, step_num, emb_from_openai)
                 ac = policy(ob=policy_ob, goal=goal_dict, state_emb=state_emb)
-
 
             ac = policy(ob=policy_ob, goal=goal_dict) #, return_ob=True)
 
