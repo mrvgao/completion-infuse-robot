@@ -200,6 +200,7 @@ def train(config, device):
         state_mapping_model.eval()
 
     model.state_mapping_model = state_mapping_model
+    model.build_optimizer_from_state_mapping()
 
     if config.experiment.only_rollout:
         progress_provider = ValueResNetWithAttnPerformance()

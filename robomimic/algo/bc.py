@@ -948,19 +948,20 @@ class BC_Transformer_GMM(BC_Transformer):
         self.state_mapping_model = None
 
     def build_optimizer_from_state_mapping(self):
-        self.state_mapping_model.train()  # set model to train
-        self.completion_task_embedding_optimizer = torch.optim.Adam(
-            self.state_mapping_model.parameters(),
-            lr=1e-3
-        )
+        if self.state_mapping_model:
+            self.state_mapping_model.train()  # set model to train
+            self.completion_task_embedding_optimizer = torch.optim.Adam(
+                self.state_mapping_model.parameters(),
+                lr=1e-3
+            )
 
-        self.schedulers_for_completion_task_embedding = torch.optim.lr_scheduler.ReduceLROnPlateau(
-            self.completion_task_embedding_optimizer,
-            mode='min',
-            factor=0.5,
-            patience=50,
-            verbose=True
-        )
+            self.schedulers_for_completion_task_embedding = torch.optim.lr_scheduler.ReduceLROnPlateau(
+                self.completion_task_embedding_optimizer,
+                mode='min',
+                factor=0.5,
+                patience=50,
+                verbose=True
+            )
 
     def _forward_training(self, batch, epoch=None, completion_embedding=None):
         """
