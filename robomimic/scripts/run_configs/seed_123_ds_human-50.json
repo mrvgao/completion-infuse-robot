@@ -90,7 +90,7 @@
             "actions"
         ],
         "goal_mode": null,
-        "cuda": false,
+        "cuda": true,
         "batch_size": 16,
         "num_epochs": 1000,
         "max_grad_norm": 100.0,
