@@ -350,7 +350,7 @@ def run_rollout(
         else:
             policy_ob = ob_dict
             if with_progress_correct:
-                if step_i % 10 == 0:
+                if step_i % 20 == 0:
                     first_left_image = ob_dict['robot0_agentview_left_image'][0]
                     first_hand_image = ob_dict['robot0_eye_in_hand_image'][0]
                     first_right_image = ob_dict['robot0_agentview_right_image'][0]
