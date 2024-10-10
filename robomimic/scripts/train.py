@@ -182,20 +182,34 @@ def train(config, device):
     print(model)  # print model summary
     print("")
 
+    if config.algo.progress_dim_size > 0:
+        state_mapping_model = CompletionEstimationWithStateDescription(
+            task_str_emb_size=config.algo.lang_embed_dim,
+            hidden_mapping_size=config.algo.progress_dim_size,
+            transformer_encoding_size=config.algo.transformer.embed_dim,
+            state_descp_size=config.algo.openai_emb_size,
+        )
+        state_mapping_model = state_mapping_model.float().to(device)
+        TorchUtils.initialize_weights(state_mapping_model, lower_bound=-0.1, upper_bound=0.1)
+    else:
+        state_mapping_model = None
+
+    if config.experiment.state_mapping_ckpt_path is not None and state_mapping_model:
+        state_mapping_model.load_state_dict(torch.load(config.experiment.state_mapping_ckpt_path))
+        state_mapping_model.to(device)
+        state_mapping_model.eval()
+
+    model.state_mapping_model = state_mapping_model
+
     if config.experiment.only_rollout:
         progress_provider = ValueResNetWithAttnPerformance()
         progress_provider.load_state_dict(torch.load(config.progress_model_path))
         progress_provider.to(device)
         progress_provider.eval()
-
-        state_mapping_model = StateEstimatorModel()
-        state_mapping_model.load_state_dict(torch.load(config.experiment.state_mapping_ckpt_path))
-        state_mapping_model.to(device)
-        state_mapping_model.eval()
-
     else:
         progress_provider = None
-        state_mapping_model = None
+
+    model.progress_provider = progress_provider
 
     # load training data
     lang_encoder = LangUtils.LangEncoder(
@@ -435,7 +449,7 @@ def train(config, device):
 
             ckpt_path = os.path.join(ckpt_dir, epoch_ckpt_name + "_compltion_infuse.pth")
             print("Saving axuiliary model to {}".format(ckpt_path))
-            torch.save(model.axuiliary_completion_mapping_nets.state_dict(), ckpt_path)
+            torch.save(model.state_mapping_model.state_dict(), ckpt_path)
 
         # Finally, log memory usage in MB
         process = psutil.Process(os.getpid())

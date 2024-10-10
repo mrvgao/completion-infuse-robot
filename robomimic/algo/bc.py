@@ -238,9 +238,9 @@ class BC(PolicyAlgo):
 
             del batch['obs']['progresses']
 
-            if self.axuiliary_completion_mapping_nets and self.axuiliary_completion_mapping_nets.hidden_mapping_size > 0:
+            if self.state_mapping_model and self.state_mapping_model.hidden_mapping_size > 0:
                 # self.optimizers["policy"].zero_grad(set_to_none=True)
-                completion_embedding = self.axuiliary_completion_mapping_nets(current_completion_batch, current_task_emb_batch, embedding_tensor_from_openai)
+                completion_embedding = self.state_mapping_model(current_completion_batch, current_task_emb_batch, embedding_tensor_from_openai)
                 completion_embedding = completion_embedding.unsqueeze(1).repeat(1, timestep, 1)
             else:
                 completion_embedding = None
@@ -916,13 +916,6 @@ class BC_Transformer(BC):
 
         return output
 
-def initialize_weights(model, lower_bound=-0.1, upper_bound=0.1):
-    for module in model.modules():
-        if isinstance(module, nn.Linear):
-            nn.init.uniform_(module.weight, a=lower_bound, b=upper_bound)  # Initialize weights uniformly
-            if module.bias is not None:
-                nn.init.uniform_(module.bias, a=lower_bound, b=upper_bound)  # Initialize bias if exists
-
 
 class BC_Transformer_GMM(BC_Transformer):
     """
@@ -951,33 +944,23 @@ class BC_Transformer_GMM(BC_Transformer):
         self.nets = self.nets.float().to(self.device)
         self.openai_emb_size = self.algo_config.openai_emb_size
 
-        if self.algo_config.progress_dim_size > 0:
-            self.axuiliary_completion_mapping_nets = CompletionEstimationWithStateDescription(
-                self.algo_config.lang_embed_dim,
-                self.algo_config.progress_dim_size,
-                self.algo_config.transformer.embed_dim,
-                self.algo_config.openai_emb_size,
-            )
-
-            self.axuiliary_completion_mapping_nets = self.axuiliary_completion_mapping_nets.float().to(self.device)
-
-            self.axuiliary_completion_mapping_nets.train() # set model to train
-
-            initialize_weights(self.axuiliary_completion_mapping_nets, lower_bound=-0.1, upper_bound=0.1)
-
-            self.completion_task_embedding_optimizer = torch.optim.Adam(self.axuiliary_completion_mapping_nets.parameters(), lr=1e-3)
-
-            self.schedulers_for_completion_task_embedding = torch.optim.lr_scheduler.ReduceLROnPlateau(
-                self.completion_task_embedding_optimizer,
-                                                                                          mode='min',
-                factor=0.5,
-                patience=50,
-                verbose=True
-            )
-        else:
-            self.axuiliary_completion_mapping_nets = None
-
         self.total_step = 0
+        self.state_mapping_model = None
+
+    def build_optimizer_from_state_mapping(self):
+        self.state_mapping_model.train()  # set model to train
+        self.completion_task_embedding_optimizer = torch.optim.Adam(
+            self.state_mapping_model.parameters(),
+            lr=1e-3
+        )
+
+        self.schedulers_for_completion_task_embedding = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            self.completion_task_embedding_optimizer,
+            mode='min',
+            factor=0.5,
+            patience=50,
+            verbose=True
+        )
 
     def _forward_training(self, batch, epoch=None, completion_embedding=None):
         """

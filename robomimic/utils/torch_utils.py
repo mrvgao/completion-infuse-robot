@@ -5,6 +5,7 @@ import numpy as np
 import torch
 import torch.optim as optim
 import torch.nn.functional as F
+from torch import nn
 
 
 def soft_update(source, target, tau):
@@ -751,3 +752,11 @@ def _axis_angle_rotation(axis: str, angle: torch.Tensor) -> torch.Tensor:
         raise ValueError("letter must be either X, Y or Z.")
 
     return torch.stack(R_flat, -1).reshape(angle.shape + (3, 3))
+
+
+def initialize_weights(model, lower_bound=-0.1, upper_bound=0.1):
+    for module in model.modules():
+        if isinstance(module, nn.Linear):
+            nn.init.uniform_(module.weight, a=lower_bound, b=upper_bound)  # Initialize weights uniformly
+            if module.bias is not None:
+                nn.init.uniform_(module.bias, a=lower_bound, b=upper_bound)  # Initialize bias if exists
