@@ -70,10 +70,6 @@
     },
     "train": {
         "data": [
-            {
-                "path": "/Users/gaominquan/Workspace/2024-Summer-Research/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToCab/2024-04-24/demo_gentex_im128_randcams.hdf5",
-                "horizon": 500
-            }
         ],
         "output_dir": "/data3/mgao/robocasa/progress_provider",
         "num_data_workers": 5,
