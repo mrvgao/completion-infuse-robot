@@ -197,18 +197,19 @@ def train(config, device):
     if config.experiment.state_mapping_ckpt_path is not None and state_mapping_model:
         state_mapping_model.load_state_dict(torch.load(config.experiment.state_mapping_ckpt_path))
         state_mapping_model.to(device)
-        state_mapping_model.eval()
 
     model.state_mapping_model = state_mapping_model
-    model.build_optimizer_from_state_mapping()
 
     if config.experiment.only_rollout:
         progress_provider = ValueResNetWithAttnPerformance()
         progress_provider.load_state_dict(torch.load(config.progress_model_path))
         progress_provider.to(device)
         progress_provider.eval()
+
+        model.state_mapping_model.eval()
     else:
         progress_provider = None
+        model.build_optimizer_from_state_mapping()  # set state_mapping_model to none and add optimizer
 
     model.progress_provider = progress_provider
 
