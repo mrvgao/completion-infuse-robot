@@ -204,8 +204,8 @@ def train(config, device):
         state_mapping_model = state_mapping_model.to(device)
         print('model state mapping model: ', state_mapping_model)
 
-        model.completion_task_embedding_optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-        model.schedulers_for_completion_task_embedding.load_state_dict(checkpoint['scheduler_state_dict'])
+        state_mapping_model.completion_task_embedding_optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+        state_mapping_model.schedulers_for_completion_task_embedding.load_state_dict(checkpoint['scheduler_state_dict'])
 
     model.state_mapping_model = state_mapping_model
 
