@@ -669,7 +669,7 @@ class RolloutPolicy(object):
         """Pretty print network description"""
         return self.policy.__repr__()
 
-    def __call__(self, ob, goal=None, batched=False):
+    def __call__(self, ob, goal=None, batched=False, x_delta_emb=None):
         """
         Produce action from raw observation dict (and maybe goal dict) from environment.
 
@@ -682,6 +682,9 @@ class RolloutPolicy(object):
         ob = self._prepare_observation(ob, batched=batched)
         if goal is not None:
             goal = self._prepare_observation(goal, batched=batched)
+
+        if x_delta_emb is not None:
+            self.x_delta_emb = x_delta_emb
 
         if self.x_delta_emb is None:
             ac = self.policy.get_action(obs_dict=ob, goal_dict=goal)

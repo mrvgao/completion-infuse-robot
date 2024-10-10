@@ -383,9 +383,10 @@ def run_rollout(
                 emb_from_openai = get_openai_embeddings([internal_state])
                 internal_states_embedding_np = np.array(emb_from_openai)
                 embedding_tensor_from_openai = torch.tensor(internal_states_embedding_np).to(policy.policy.device).to(torch.float)
+                complete_rate_ratio = torch.Tensor([complete_rate]).unsqueeze(0).to(policy.policy.device).to(torch.float)
 
                 state_emb = policy.policy.state_mapping_model(
-                    task_emb, torch.Tensor([complete_rate]),
+                    task_emb, complete_rate_ratio,
                     embedding_tensor_from_openai
                 )
 
