@@ -212,7 +212,7 @@ def train(config, device):
         progress_provider.load_state_dict(torch.load(config.progress_model_path))
         progress_provider = progress_provider.to(device)
 
-        print('model state mapping model: ', progress_provider)
+        print('model progress model: ', progress_provider)
         progress_provider.eval()
         model.state_mapping_model.eval()
     else:
