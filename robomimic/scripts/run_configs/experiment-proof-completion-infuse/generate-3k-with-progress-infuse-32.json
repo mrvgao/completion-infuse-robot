@@ -3,8 +3,9 @@
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/model_epoch_10.pth",
     "cuda_mark": "cuda:7",
     "experiment": {
-        "name": "TASL-3k-infuse-progress-32-with-openai",
+        "name": "TASL-3k-infuse-progress-32-with-openai-continue-train",
         "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-0/TASL-3k-without-completion-infuse/20241003220455/models/model_epoch_1000.pth",
+        "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-32/TASL-3k-infuse-progress-32-with-openai/20241009141848/models/model_epoch_10_compltion_infuse.pth",
         "validate": false,
         "only_rollout": false,
         "logging": {

@@ -195,14 +195,22 @@ def train(config, device):
         state_mapping_model = None
 
     if config.experiment.state_mapping_ckpt_path is not None and state_mapping_model:
+        print('loading state mapping model from {}'.format(config.experiment.state_mapping_ckpt_path))
+
         state_mapping_model.load_state_dict(torch.load(config.experiment.state_mapping_ckpt_path))
         state_mapping_model.to(device)
+        print('model state mapping model: ', state_mapping_model)
 
     model.state_mapping_model = state_mapping_model
 
     if config.experiment.only_rollout:
+        assert config.progress_model_path is not None, 'progress model is None at only rollout mode'
+        print('loading progress model from {}'.format(config.progress_model_path))
+
         progress_provider = ValueResNetWithAttnPerformance()
         progress_provider.load_state_dict(torch.load(config.progress_model_path))
+
+        print('model state mapping model: ', progress_provider)
         progress_provider.to(device)
         progress_provider.eval()
         model.state_mapping_model.eval()
