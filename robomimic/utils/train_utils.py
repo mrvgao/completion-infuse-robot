@@ -346,7 +346,6 @@ def run_rollout(
     
     for step_i in range(horizon): #LogUtils.tqdm(range(horizon)):
         # get action from policy
-        print(step_i, end=' ')
         if batched:
             policy_ob = batchify_obs(ob_dict)
             ac = policy(ob=policy_ob, goal=goal_dict, batched=True) #, return_ob=True)
