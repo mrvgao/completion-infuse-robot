@@ -195,21 +195,17 @@ def train(config, device):
     else:
         state_mapping_model = None
 
+    model.state_mapping_model = state_mapping_model
+
     if config.experiment.state_mapping_ckpt_path is not None and state_mapping_model:
         print('loading state mapping model from {}'.format(config.experiment.state_mapping_ckpt_path))
-
         checkpoint = torch.load(config.experiment.state_mapping_ckpt_path)
-
-        state_mapping_model.load_state_dict(checkpoint['model_state_dict'])
-        state_mapping_model = state_mapping_model.to(device)
+        model.state_mapping_model.load_state_dict(checkpoint['model_state_dict'])
+        model.state_mapping_model = model.state_mapping_model.to(device)
         print('model state mapping model: ', state_mapping_model)
-
         model.build_optimizer_from_state_mapping()  # set state_mapping_model to none and add optimizer
-
         model.completion_task_embedding_optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
         model.schedulers_for_completion_task_embedding.load_state_dict(checkpoint['scheduler_state_dict'])
-
-    model.state_mapping_model = state_mapping_model
 
     if config.experiment.only_rollout:
         assert config.progress_model_path is not None, 'progress model is None at only rollout mode'
