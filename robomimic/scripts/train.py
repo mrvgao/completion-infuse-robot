@@ -205,7 +205,6 @@ def train(config, device):
         progress_provider.load_state_dict(torch.load(config.progress_model_path))
         progress_provider.to(device)
         progress_provider.eval()
-
         model.state_mapping_model.eval()
     else:
         progress_provider = None
