@@ -171,7 +171,11 @@ class BC(PolicyAlgo):
 
                 next_action = parse_next_action(internal_state)
 
-                if next_action is None: next_action = ""
+                if next_action is None:
+                    print(f'Error: task {index} : {task_str} : {internal_state} : {task_complete_rate} : {left_image.shape} : {hand_image.shape} : {right_image.shape} : {task_str} : {task_complete_rate} : {internal_state} : {next_action}')
+                    next_action = ""
+                else:
+                    print(f'task {index} : {task_str} : {next_action}')
 
                 if logging_openai_difference:
                     path_task_str = task_str.replace(' ', '_')
