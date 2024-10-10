@@ -218,11 +218,17 @@ def train(config, device):
         print('model progress model: ', progress_provider)
         progress_provider.eval()
         model.state_mapping_model.eval()
+        model.progress_provider = progress_provider
     else:
         progress_provider = None
         model.build_optimizer_from_state_mapping()  # set state_mapping_model to none and add optimizer
 
-    model.progress_provider = progress_provider
+    if config.experiment.only_train_progress_model and progress_provider is None:
+        progress_provider = ValueResNetWithAttnPerformance()
+        progress_provider = progress_provider.float().to(device)
+        TorchUtils.initialize_weights(progress_provider, lower_bound=-0.1, upper_bound=0.1)
+        model.progress_provider = progress_provider
+        model.build_optimizer_for_progress_provider()
 
     # load training data
     lang_encoder = LangUtils.LangEncoder(
@@ -298,6 +304,7 @@ def train(config, device):
                 num_steps=train_num_steps,
                 obs_normalization_stats=obs_normalization_stats,
                 lang_encoder=lang_encoder,
+                only_train_progress_provider=config.experiment.only_train_progress_model,
             )
             model.on_epoch_end(epoch)
 

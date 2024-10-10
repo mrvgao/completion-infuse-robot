@@ -59,6 +59,7 @@ class BaseConfig(Config):
         self.progress_model_path = None
         self.experiment.only_rollout = None
         self.experiment.rollout.with_progress_correct = None
+        self.experiment.only_train_progress_model = False
         self.cuda_mark = "cuda:0"
 
         self.experiment.state_mapping_ckpt_path = None

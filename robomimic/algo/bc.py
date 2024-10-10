@@ -123,6 +123,22 @@ class BC(PolicyAlgo):
         # this minimizes the amount of data transferred to GPU
         return TensorUtils.to_float(TensorUtils.to_device(input_batch, self.device))
 
+    def train_on_batch_for_progress_provider(self, batch, epoch):
+        current_completion_batch = batch['obs']['progresses'][:, 0, :]
+        current_task_emb_batch = batch['obs'][LANG_EMB_KEY][:, 0, :]
+
+        timestep = batch['obs'][LANG_EMB_KEY].size()[1]
+
+        import pdb; pdb.set_trace()
+
+        first_frame_left_images = batch['obs']['robot0_agentview_left_image'][:, 0, :]
+        first_frame_hand_images = batch['obs']['robot0_eye_in_hand_image'][:, 0, :]
+        first_frame_right_images = batch['obs']['robot0_agentview_right_image'][:, 0, :]
+
+        self.total_step += 1
+
+
+
 
     def train_on_batch(self, batch, epoch, validate=False, lang_encoder=None):
         """
@@ -968,6 +984,7 @@ class BC_Transformer_GMM(BC_Transformer):
 
         self.total_step = 0
         self.state_mapping_model = None
+        self.progress_provider = None
 
     def build_optimizer_from_state_mapping(self):
         if self.state_mapping_model:
@@ -984,6 +1001,12 @@ class BC_Transformer_GMM(BC_Transformer):
                 patience=50,
                 verbose=True
             )
+
+    def build_optimizer_for_progress_provider(self):
+        if self.progress_provider:
+            self.progress_provider.train()
+            self.progress_optimizer = torch.optim.Adam(self.progress_provider.parameters(), lr=self.algo_config.progress_lr, weight_decay=1e-4)
+            self.progress_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(self.progress_optimizer, 'min', patience=3, factor=0.75)
 
     def _forward_training(self, batch, epoch=None, completion_embedding=None):
         """
