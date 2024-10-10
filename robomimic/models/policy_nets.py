@@ -1321,7 +1321,7 @@ class TransformerGMMActorNetwork(TransformerActorNetwork):
 
         return dists
 
-    def forward(self, obs_dict, actions=None, goal_dict=None):
+    def forward(self, obs_dict, actions=None, goal_dict=None, x_delta_emb=None):
         """
         Samples actions from the policy distribution.
         Args:
@@ -1331,7 +1331,7 @@ class TransformerGMMActorNetwork(TransformerActorNetwork):
         Returns:
             action (torch.Tensor): batch of actions from policy distribution
         """
-        out = self.forward_train(obs_dict=obs_dict, actions=actions, goal_dict=goal_dict)
+        out = self.forward_train(obs_dict=obs_dict, actions=actions, goal_dict=goal_dict, completion_embedding=x_delta_emb)
         return out.sample()
 
     def _to_string(self):

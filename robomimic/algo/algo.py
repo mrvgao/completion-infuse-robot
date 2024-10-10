@@ -614,7 +614,7 @@ class RolloutPolicy(object):
     """
     Wraps @Algo object to make it easy to run policies in a rollout loop.
     """
-    def __init__(self, policy, obs_normalization_stats=None, action_normalization_stats=None, lang_encoder=None):
+    def __init__(self, policy, obs_normalization_stats=None, action_normalization_stats=None, lang_encoder=None, x_delta_emb=None):
         """
         Args:
             policy (Algo instance): @Algo object to wrap to prepare for rollouts
@@ -629,6 +629,7 @@ class RolloutPolicy(object):
         self.action_normalization_stats = action_normalization_stats
         self._ep_lang_emb = None
         self.lang_encoder = lang_encoder
+        self.x_delta_emb = x_delta_emb
 
     def start_episode(self, lang=None):
         """
@@ -681,7 +682,12 @@ class RolloutPolicy(object):
         ob = self._prepare_observation(ob, batched=batched)
         if goal is not None:
             goal = self._prepare_observation(goal, batched=batched)
-        ac = self.policy.get_action(obs_dict=ob, goal_dict=goal)
+
+        if self.x_delta_emb is None:
+            ac = self.policy.get_action(obs_dict=ob, goal_dict=goal)
+        else:
+            ac = self.policy.get_action(obs_dict=ob, goal_dict=goal, x_delta_emb=self.x_delta_emb)
+
         if not batched:
             ac = ac[0]
         ac = TensorUtils.to_numpy(ac)
