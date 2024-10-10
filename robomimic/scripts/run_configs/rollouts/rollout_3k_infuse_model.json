@@ -1,11 +1,11 @@
 {
     "algo_name": "bc",
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/best_model.pth",
-    "cuda_mark": "cuda:2",
+    "cuda_mark": "cuda:4",
     "experiment": {
-        "name": "TASL-50-infuse-with-infuse-knowledge-rollout",
-        "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-0/TASL-human-50-without-completion-infuse/20241003220512/models/model_epoch_1000.pth",
-        "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-32/TASL-human-50-infuse-progress-32-with-openai/20241009141848/models/model_epoch_10_compltion_infuse.pth",
+        "name": "TASL-3k-infuse-with-infuse-knowledge-rollout",
+        "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-0/TASL-3k-without-completion-infuse/20241003220455/models/model_epoch_1000.pth",
+        "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-32/TASL-3k-infuse-progress-32-with-openai/20241009141848/models/model_epoch_10_compltion_infuse.pth",
         "validate": false,
         "only_rollout": true,
         "logging": {
