@@ -361,7 +361,7 @@ def run_rollout(
                 first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(1, 2, 0))
                 first_left_image_transformed = resnet_transformer(first_left_image.transpose(1, 2, 0))
 
-                step_num = policy.policy.progress_provider(
+                complete_rate = policy.policy.progress_provider(
                     first_left_image_transformed,
                     first_hand_image_transformed,
                     first_right_image_transformed,
@@ -374,14 +374,14 @@ def run_rollout(
                     first_left_image_transformed.cpu().numpy(),
                     first_hand_image_transformed.cpu().numpy(),
                     first_right_image_transformed.cpu().numpy(),
-                    step=step_num, horizon=horizon, task=task_str,
+                    complete_rate=complete_rate, task=task_str,
                 )
 
                 emb_from_openai = get_openai_embeddings([internal_state])
-                state_emb = policy.state_mapping_model(task_str, step_num, emb_from_openai)
-                ac = policy(ob=policy_ob, goal=goal_dict, state_emb=state_emb)
+                state_emb = policy.state_mapping_model(task_str, complete_rate, emb_from_openai)
+                ac = policy(ob=policy_ob, goal=goal_dict, x_delta_emb=state_emb)
 
-            ac = policy(ob=policy_ob, goal=goal_dict) #, return_ob=True)
+            # ac = policy(ob=policy_ob, goal=goal_dict) #, return_ob=True)
 
         # play action
         ob_dict, r, done, info = env.step(ac)
