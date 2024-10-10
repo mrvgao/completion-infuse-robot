@@ -190,7 +190,6 @@ def train(config, device):
             # state_descp_size=config.algo.openai_emb_size,
             state_descp_size=config.algo.lang_embed_dim,
         )
-        import pdb; pdb.set_trace()
         state_mapping_model = state_mapping_model.float().to(device)
         TorchUtils.initialize_weights(state_mapping_model, lower_bound=-0.1, upper_bound=0.1)
     else:
