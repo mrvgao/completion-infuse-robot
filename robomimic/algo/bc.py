@@ -137,9 +137,6 @@ class BC(PolicyAlgo):
 
         self.total_step += 1
 
-
-
-
     def train_on_batch(self, batch, epoch, validate=False, lang_encoder=None):
         """
         Training on a single batch of data.
