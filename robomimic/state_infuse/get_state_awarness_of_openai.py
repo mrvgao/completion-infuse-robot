@@ -51,7 +51,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, complete
                 "content": [
                     {
                         "type": "text",
-                        "text": prompt_configs['with_complete_rate'].format(**{'task': task, 'complete_rate': 100 * complete_rate})
+                        "text": prompt_configs['only_action'].format(**{'task': task, 'complete_rate': 100 * complete_rate})
                                 if with_complete_rate else
                                 prompt_configs['without_complete_rate'].format(**{'task': task})
                     },
