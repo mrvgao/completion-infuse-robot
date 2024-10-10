@@ -242,7 +242,8 @@ class BC(PolicyAlgo):
             #     # Map the function to each index in parallel
             #     results = list(executor.map(process_index, range(batch_size)))
 
-            next_action_embedding = get_openai_embedding(internal_states_string_from_openai)
+            # next_action_embedding = get_openai_embedding(internal_states_string_from_openai)
+            next_action_embedding = lang_encoder.get_lang_emb(internal_states_string_from_openai)
             next_action_embedding = TensorUtils.to_numpy(next_action_embedding)
 
             # internal_states_embedding_from_openai = list(results)
