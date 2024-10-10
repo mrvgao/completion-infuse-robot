@@ -198,7 +198,7 @@ def train(config, device):
         print('loading state mapping model from {}'.format(config.experiment.state_mapping_ckpt_path))
 
         state_mapping_model.load_state_dict(torch.load(config.experiment.state_mapping_ckpt_path))
-        state_mapping_model.to(device)
+        state_mapping_model = state_mapping_model.to(device)
         print('model state mapping model: ', state_mapping_model)
 
     model.state_mapping_model = state_mapping_model
@@ -209,7 +209,7 @@ def train(config, device):
 
         progress_provider = ValueResNetWithAttnPerformance()
         progress_provider.load_state_dict(torch.load(config.progress_model_path))
-        progress_provider.to(device)
+        progress_provider = progress_provider.to(device)
 
         print('model state mapping model: ', progress_provider)
         progress_provider.eval()

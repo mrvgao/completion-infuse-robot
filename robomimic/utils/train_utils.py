@@ -615,8 +615,6 @@ def rollout_with_stats(
                     video_writer=env_video_writer,
                     video_skip=video_skip,
                     terminate_on_success=terminate_on_success,
-                    progress_model=progress_model,
-                    state_mapping_model=state_mapping_model,
                     with_progress_correct=with_progress_correct,
                 )
             except Exception as e:
