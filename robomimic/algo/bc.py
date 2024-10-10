@@ -163,11 +163,14 @@ class BC(PolicyAlgo):
                 task_complete_rate = current_completion_batch[index].cpu().numpy()
                 task_complete_rate = task_complete_rate[0]
 
-                internal_state = get_internal_state_form_openai(
-                        left_image, hand_image, right_image,
-                        task_complete_rate, task_str,
-                        with_complete_rate=True, write_image=logging_openai_difference
-                )
+                if self.total_step % 20 == 0:
+                    internal_state = get_internal_state_form_openai(
+                            left_image, hand_image, right_image,
+                            task_complete_rate, task_str,
+                            with_complete_rate=True, write_image=logging_openai_difference
+                    )
+                else:
+                    internal_state = ""
 
                 next_action = internal_state
 
@@ -223,6 +226,8 @@ class BC(PolicyAlgo):
                 results = list(executor.map(process_index, range(batch_size)))
 
             internal_states_string_from_openai = list(results)
+
+            self.total_step += 1
 
             # def process_index(index):
             #     if internal_states_string_from_openai[index] is None:
