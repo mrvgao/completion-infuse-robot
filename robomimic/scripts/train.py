@@ -187,7 +187,8 @@ def train(config, device):
             task_str_emb_size=config.algo.lang_embed_dim,
             hidden_mapping_size=config.algo.progress_dim_size,
             transformer_encoding_size=config.algo.transformer.embed_dim,
-            state_descp_size=config.algo.openai_emb_size,
+            # state_descp_size=config.algo.openai_emb_size,
+            state_descp_size=config.algo.lang_embed_dim,
         )
         state_mapping_model = state_mapping_model.float().to(device)
         TorchUtils.initialize_weights(state_mapping_model, lower_bound=-0.1, upper_bound=0.1)
@@ -293,6 +294,7 @@ def train(config, device):
                 epoch=epoch,
                 num_steps=train_num_steps,
                 obs_normalization_stats=obs_normalization_stats,
+                lang_encoder=lang_encoder,
             )
             model.on_epoch_end(epoch)
 

@@ -17,12 +17,14 @@ import robomimic.utils.loss_utils as LossUtils
 import robomimic.utils.tensor_utils as TensorUtils
 import robomimic.utils.torch_utils as TorchUtils
 import robomimic.utils.obs_utils as ObsUtils
+import robomimic.utils.lang_utils as LangUtils
 from robomimic.macros import LANG_EMB_KEY
 
 from robomimic.algo import register_algo_factory_func, PolicyAlgo
 from robomimic.state_infuse.state_estimator_model import CompletionTaskEmbeddingModel, CompletionEstimationWithStateDescription
 from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
 from robomimic.state_infuse.get_state_awarness_of_openai import get_embeddings as get_openai_embedding
+from robomimic.state_infuse.utils import parse_next_action
 import cv2
 import os
 import random
@@ -122,7 +124,7 @@ class BC(PolicyAlgo):
         return TensorUtils.to_float(TensorUtils.to_device(input_batch, self.device))
 
 
-    def train_on_batch(self, batch, epoch, validate=False):
+    def train_on_batch(self, batch, epoch, validate=False, lang_encoder=None):
         """
         Training on a single batch of data.
 
@@ -167,6 +169,10 @@ class BC(PolicyAlgo):
                         with_complete_rate=True, write_image=logging_openai_difference
                 )
 
+                next_action = parse_next_action(internal_state)
+
+                if next_action is None: next_action = ""
+
                 if logging_openai_difference:
                     path_task_str = task_str.replace(' ', '_')
                     recording_dir = f'recording_{self.total_step}_{index}_{path_task_str}'
@@ -205,7 +211,7 @@ class BC(PolicyAlgo):
                 else:
                     internal_state = None
 
-                return internal_state
+                return next_action
 
             # Use ThreadPoolExecutor for parallel processing
             with concurrent.futures.ThreadPoolExecutor() as executor:
@@ -214,27 +220,30 @@ class BC(PolicyAlgo):
 
             internal_states_string_from_openai = list(results)
 
-            def process_index(index):
-                if internal_states_string_from_openai[index] is None:
-                    return np.zeros(self.openai_emb_size)
-                else:
-                    try:
-                        emb = get_openai_embedding([internal_states_string_from_openai[index]])
-                        if emb and emb[0] is not None:
-                            return emb[0]
-                        else:
-                            return np.zeros(self.openai_emb_size)
-                    except Exception as e:
-                        print(e)
-                        return np.zeros(self.openai_emb_size)
+            # def process_index(index):
+            #     if internal_states_string_from_openai[index] is None:
+            #         return np.zeros(self.openai_emb_size)
+            #     else:
+            #         try:
+            #             # emb = get_openai_embedding([internal_states_string_from_openai[index]])
+            #             if emb and emb[0] is not None:
+            #                 return emb[0]
+            #             else:
+            #                 return np.zeros(self.openai_emb_size)
+            #         except Exception as e:
+            #             print(e)
+            #             return np.zeros(self.openai_emb_size)
+            #
+            # with concurrent.futures.ThreadPoolExecutor() as executor:
+            #     # Map the function to each index in parallel
+            #     results = list(executor.map(process_index, range(batch_size)))
 
-            with concurrent.futures.ThreadPoolExecutor() as executor:
-                # Map the function to each index in parallel
-                results = list(executor.map(process_index, range(batch_size)))
+            next_action_embedding = get_openai_embedding(internal_states_string_from_openai)
+            next_action_embedding = TensorUtils.to_numpy(next_action_embedding)
 
-            internal_states_embedding_from_openai = list(results)
-            internal_states_embedding_np = np.array(internal_states_embedding_from_openai)
-            embedding_tensor_from_openai = torch.tensor(internal_states_embedding_np).to(self.device).to(torch.float)
+            # internal_states_embedding_from_openai = list(results)
+            # internal_states_embedding_np = np.array(internal_states_embedding_from_openai)
+            embedding_tensor_from_openai = torch.tensor(next_action_embedding).to(self.device).to(torch.float)
 
             del batch['obs']['progresses']
 
