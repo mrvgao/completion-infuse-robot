@@ -382,6 +382,7 @@ def train(config, device):
                 data_logger=data_logger,
                 progress_model=progress_provider,
                 with_progress_correct=config.experiment.rollout.with_progress_correct,
+                lang_encoder=lang_encoder,
             )
 
             #### move this code to rollout_with_stats function to log results one by one ####

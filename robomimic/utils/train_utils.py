@@ -289,6 +289,7 @@ def run_rollout(
         video_skip=5,
         terminate_on_success=False,
         with_progress_correct=False,
+        lang_encoder=None,
     ):
     """
     Runs a rollout in an environment with the current network parameters.
@@ -381,14 +382,18 @@ def run_rollout(
                         complete_rate=complete_rate, task=task_str,
                     )
 
-                    emb_from_openai = get_openai_embeddings([internal_state])
-                    internal_states_embedding_np = np.array(emb_from_openai)
-                    embedding_tensor_from_openai = torch.tensor(internal_states_embedding_np).to(policy.policy.device).to(torch.float)
+                    # emb_from_openai = get_openai_embeddings([internal_state])
+                    next_action_emb_from_clip = lang_encoder.get_lang_emb([internal_state])
+                    next_action_emb_from_clip = TensorUtils.to_numpy(next_action_emb_from_clip)
+                    next_action_emb_from_clip = torch.tensor(next_action_emb_from_clip).to(policy.policy.device).to(torch.float)
+
+                    # internal_states_embedding_np = np.array(emb_from_openai)
+                    # embedding_tensor_from_openai = torch.tensor(next_action_emb_from_clip).to(policy.policy.device).to(torch.float)
                     complete_rate_ratio = torch.Tensor([complete_rate]).unsqueeze(0).to(policy.policy.device).to(torch.float)
 
                     state_emb = policy.policy.state_mapping_model(
                         complete_rate_ratio, task_emb,
-                        embedding_tensor_from_openai
+                        next_action_emb_from_clip
                     )
 
                     ac = policy(ob=policy_ob, goal=goal_dict, x_delta_emb=state_emb)
@@ -540,6 +545,7 @@ def rollout_with_stats(
         progress_model=None,
         state_mapping_model=None,
         with_progress_correct=False,
+        lang_encoder=None,
     ):
     """
     A helper function used in the train loop to conduct evaluation rollouts per environment
@@ -637,6 +643,7 @@ def rollout_with_stats(
                     video_skip=video_skip,
                     terminate_on_success=terminate_on_success,
                     with_progress_correct=with_progress_correct,
+                    lang_encoder=lang_encoder,
                 )
             except Exception as e:
                 print("Rollout exception at episode number {}!".format(ep_i))
