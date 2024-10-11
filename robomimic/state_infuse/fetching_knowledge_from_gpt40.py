@@ -41,6 +41,8 @@ def extract_and_export_image(all_demo_dataset):
             hand_image = exporting_dataset[i]['obs'][eye_names[1]][0]
             right_image = exporting_dataset[i]['obs'][eye_names[2]][0]
 
+            print('left_image shape: ', left_image.shape)
+
             demo_id = exporting_dataset._index_to_demo_id[i]
             demo_start_index = exporting_dataset._demo_id_to_start_indices[demo_id]
             demo_length = exporting_dataset._demo_id_to_demo_length[demo_id]
