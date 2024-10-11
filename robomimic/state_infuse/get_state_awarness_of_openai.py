@@ -20,11 +20,12 @@ def encode_image(image_path):
         return base64.b64encode(image_file.read()).decode('utf-8')
 
 
-def change_ndarray_to_base64(image, file_name='temp.png', write_image=False):
+def change_ndarray_to_base64(image, file_name='temp.png', write_image=False, with_image_format_change=True):
     # Convert the image to base64
-    if image.shape[0] == 3: # change (3, 128, 128) to (128, 128, 3)
+    if with_image_format_change:
         image = (np.transpose(image, (1, 2, 0)) * 255).astype(np.uint8)
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+
     _, buffer = cv2.imencode('.png', image)
     img_str = base64.b64encode(buffer).decode('utf-8')
 
@@ -34,10 +35,14 @@ def change_ndarray_to_base64(image, file_name='temp.png', write_image=False):
     return img_str
 
 
-def get_internal_state_form_openai(image_left, image_hand, image_right, complete_rate, task, with_complete_rate=True, write_image=False):
-    base64_image_left = change_ndarray_to_base64(image_left, task + f'_left_{complete_rate}.png', write_image)
-    base64_image_hand = change_ndarray_to_base64(image_hand, task + f'_hand_{complete_rate}.png', write_image)
-    base64_image_right = change_ndarray_to_base64(image_right, task + f'_right_{complete_rate}.png', write_image)
+def get_internal_state_form_openai(image_left, image_hand, image_right, complete_rate, task,
+                                   with_complete_rate=True, write_image=False, with_image_format_change=True):
+    base64_image_left = change_ndarray_to_base64(image_left, task + f'_left_{complete_rate}.png',
+                                                 write_image, with_image_format_change=with_image_format_change)
+    base64_image_hand = change_ndarray_to_base64(image_hand, task + f'_hand_{complete_rate}.png',
+                                                 write_image, with_image_format_change=with_image_format_change)
+    base64_image_right = change_ndarray_to_base64(image_right, task + f'_right_{complete_rate}.png',
+                                                  write_image, with_image_format_change=with_image_format_change)
 
     headers = {
         "Content-Type": "application/json",

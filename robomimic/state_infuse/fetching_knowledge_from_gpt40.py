@@ -13,11 +13,20 @@ from robomimic.utils.log_utils import PrintLogger, DataLogger, flush_warnings
 from tqdm import tqdm
 from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
 import pickle
+import cv2
 
 TASK_MAPPING_50_DEMO = {
     "PnPCounterToCab": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToCab/2024-04-24/demo_gentex_im128_randcams.hdf5",
    "TurnOffMicrowave": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_microwave/TurnOffMicrowave/2024-04-25/demo_gentex_im128_randcams.hdf5"
 }
+
+
+def format_image(image):
+    image = np.array(image)
+    image = image.astype(np.uint8)
+    image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    return image
 
 
 def extract_and_export_image(all_demo_dataset):
@@ -60,12 +69,19 @@ def extract_and_export_image(all_demo_dataset):
             if save_key not in task_progress_states_mapping:
                 print(f'getting task {task_description} in progress {complete_rate} from openai')
 
-                internal_state = get_internal_state_form_openai(left_image, hand_image,
-                                                                right_image,
-                                                                complete_rate,
-                                                                task_description,
-                                                                with_complete_rate=True,
-                                                                write_image=True)
+                left_image = format_image(left_image)
+                hand_image = format_image(hand_image)
+                right_image = format_image(right_image)
+
+                internal_state = get_internal_state_form_openai(
+                    left_image, hand_image,
+                    right_image,
+                    complete_rate,
+                    task_description,
+                    with_complete_rate=True,
+                    write_image=True,
+                    with_image_format_change=False
+                )
 
                 print('get response: ', internal_state)
 
