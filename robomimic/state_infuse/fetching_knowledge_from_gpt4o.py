@@ -41,8 +41,6 @@ def extract_and_export_image(all_demo_dataset):
 
         print('PROCESSING... dataset index with: ', di)
 
-        global task_progress_states_mapping
-
         for i in tqdm(range(len(exporting_dataset))):
             if i > 100: break
 
