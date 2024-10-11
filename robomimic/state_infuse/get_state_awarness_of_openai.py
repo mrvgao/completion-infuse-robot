@@ -22,7 +22,8 @@ def encode_image(image_path):
 
 def change_ndarray_to_base64(image, file_name='temp.png', write_image=False):
     # Convert the image to base64
-    image = (np.transpose(image, (1, 2, 0)) * 255).astype(np.uint8)
+    if image.shape[0] == 3: # change (3, 128, 128) to (128, 128, 3)
+        image = (np.transpose(image, (1, 2, 0)) * 255).astype(np.uint8)
     image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
     _, buffer = cv2.imencode('.png', image)
     img_str = base64.b64encode(buffer).decode('utf-8')
@@ -51,7 +52,7 @@ def get_internal_state_form_openai(image_left, image_hand, image_right, complete
                 "content": [
                     {
                         "type": "text",
-                        "text": prompt_configs['only_action'].format(**{'task': task, 'complete_rate': 100 * complete_rate})
+                        "text": prompt_configs['with_complete_rate'].format(**{'task': task, 'complete_rate': 100 * complete_rate})
                                 if with_complete_rate else
                                 prompt_configs['without_complete_rate'].format(**{'task': task})
                     },
