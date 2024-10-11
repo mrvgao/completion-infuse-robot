@@ -86,6 +86,7 @@ def extract_and_export_image(all_demo_dataset):
 
                     internal_state = re.sub(r'[\n\t\s]+', '', internal_state)
                     internal_state = internal_state.replace('python', '')
+                    import pdb; pdb.set_trace()
 
                     internal_state = ast.literal_eval(internal_state)
 
