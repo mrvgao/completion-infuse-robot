@@ -14,6 +14,8 @@ from tqdm import tqdm
 from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
 import pickle
 import cv2
+import re
+import ast
 
 TASK_MAPPING_50_DEMO = {
     "PnPCounterToCab": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToCab/2024-04-24/demo_gentex_im128_randcams.hdf5",
@@ -71,19 +73,28 @@ def extract_and_export_image(all_demo_dataset):
                 hand_image = format_image(hand_image)
                 right_image = format_image(right_image)
 
-                internal_state = get_internal_state_form_openai(
-                    left_image, hand_image,
-                    right_image,
-                    complete_rate,
-                    task_description,
-                    with_complete_rate=True,
-                    write_image=False,
-                    with_image_format_change=False
-                )
+                try:
+                    internal_state = get_internal_state_form_openai(
+                        left_image, hand_image,
+                        right_image,
+                        complete_rate,
+                        task_description,
+                        with_complete_rate=True,
+                        write_image=False,
+                        with_image_format_change=False
+                    )
 
-                print('get response: ', internal_state)
+                    internal_state = re.sub(r'[\n\t\s]+', '', internal_state)
+                    internal_state = internal_state.replace('python', '')
 
-                task_progress_states_mapping[save_key] = internal_state
+                    internal_state = ast.literal_eval(internal_state)
+
+                    print('get response: ', internal_state)
+
+                    task_progress_states_mapping[save_key] = internal_state
+                except Exception as e:
+                    print('get error: ', e)
+                    print('when processing task: ', task_description, ' with progress: ', complete_rate)
 
         with open('task_progress_states_mapping.pkl', 'wb') as f:
             pickle.dump(task_progress_states_mapping, f)
