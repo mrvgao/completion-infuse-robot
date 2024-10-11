@@ -399,6 +399,8 @@ def run_rollout(
                     ac = policy(ob=policy_ob, goal=goal_dict, x_delta_emb=state_emb)
                 else:
                     ac = policy(ob=policy_ob, goal=goal_dict) #, return_ob=True)
+            else:
+                ac = policy(ob=policy_ob, goal=goal_dict)  # , return_ob=True)
 
         # play action
         ob_dict, r, done, info = env.step(ac)
