@@ -70,8 +70,6 @@ def extract_and_export_image(all_demo_dataset):
             hand_image = exporting_dataset[i]['obs'][eye_names[1]][0]
             right_image = exporting_dataset[i]['obs'][eye_names[2]][0]
 
-            print('left_image shape: ', left_image.shape)
-
             demo_id = exporting_dataset._index_to_demo_id[i]
             demo_start_index = exporting_dataset._demo_id_to_start_indices[demo_id]
             demo_length = exporting_dataset._demo_id_to_demo_length[demo_id]
@@ -80,7 +78,7 @@ def extract_and_export_image(all_demo_dataset):
             demo_index_offset = 0 if exporting_dataset.pad_frame_stack else (exporting_dataset.n_frame_stack - 1)
             index_in_demo = i - demo_start_index + demo_index_offset
 
-            complete_rate = round(index_in_demo / demo_length, 0)
+            complete_rate = round(index_in_demo / demo_length, 1)
 
             task_description = exporting_dataset._demo_id_to_demo_lang_str[demo_id]
 
