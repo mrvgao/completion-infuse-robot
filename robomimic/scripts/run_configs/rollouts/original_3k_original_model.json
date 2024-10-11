@@ -1,11 +1,10 @@
 {
     "algo_name": "bc",
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/best_model.pth",
-    "cuda_mark": "cuda:4",
+    "cuda_mark": "cuda:2",
     "experiment": {
-        "name": "TASL-3k-infuse-with-infuse-knowledge-rollout",
-        "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-32/TASL-3k-infuse-progress-32-with-openai-continue-train/20241009222645/models/model_epoch_20.pth",
-        "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-32/TASL-3k-infuse-progress-32-with-openai-continue-train/20241009222645/models/model_epoch_20_compltion_infuse.pth",
+        "name": "TASL-human-3k-original-rollout",
+        "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-0/TASL-3k-without-completion-infuse/20241003220455/models/model_epoch_1000.pth",
         "validate": false,
         "only_rollout": true,
         "logging": {
@@ -34,12 +33,12 @@
         "video_skip": 5,
         "rollout": {
             "enabled": true,
-            "n": 25,
+            "n": 50,
             "horizon": 500,
             "rate": 1,
             "warmstart": 0,
             "terminate_on_success": true,
-            "with_progress_correct": true
+            "with_progress_correct": false
         },
         "env_meta_update_dict": {
             "env_kwargs": {
@@ -77,97 +76,117 @@
     "train": {
         "data": [
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToMicrowave/mg/2024-05-04-22-13-21_and_2024-05-07-07-41-17/demo_gentex_im128_randcams.hdf5",
-                "horizon": 600,
-                "filter_key": "50_demos"
-            },
-            {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPMicrowaveToCounter/mg/2024-05-04-22-14-26_and_2024-05-07-07-41-42/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToCab/2024-04-24/demo_gentex_im128_randcams.hdf5",
                 "horizon": 500,
                 "filter_key": "50_demos"
             },
             {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCabToCounter/2024-04-24/demo_gentex_im128_randcams.hdf5",
+                "horizon": 500,
+                "filter_key": "50_demos"
+            },
+            {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToSink/2024-04-25/demo_gentex_im128_randcams.hdf5",
+                "horizon": 700,
+                "filter_key": "50_demos"
+            },
+            {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPSinkToCounter/2024-04-26_2/demo_gentex_im128_randcams.hdf5",
+                "horizon": 500,
+                "filter_key": "50_demos"
+            },
+            {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToMicrowave/2024-04-27/demo_gentex_im128_randcams.hdf5",
+                "horizon": 600,
+                "filter_key": "50_demos"
+            },
+            {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPMicrowaveToCounter/2024-04-26/demo_gentex_im128_randcams.hdf5",
+                "horizon": 500,
+                "filter_key": "50_demos"
+            },
+             {
                 "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToStove/mg/2024-05-04-22-14-20/demo_gentex_im128_randcams.hdf5",
                 "horizon": 500,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPStoveToCounter/mg/2024-05-04-22-14-40/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPStoveToCounter/2024-05-01/demo_gentex_im128_randcams.hdf5",
                 "horizon": 500,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_doors/OpenSingleDoor/mg/2024-05-04-22-37-39/demo_gentex_im128_randcams.hdf5",
-                "horizon": 500,
-                "filter_key": "50_demos"
-            },
-             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_doors/CloseSingleDoor/mg/2024-05-04-22-34-56/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_doors/OpenSingleDoor/2024-04-24/demo_gentex_im128_randcams.hdf5",
                 "horizon": 500,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_doors/OpenDoubleDoor/mg/2024-05-04-22-35-53/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_doors/CloseSingleDoor/2024-04-24/demo_gentex_im128_randcams.hdf5",
+                "horizon": 500,
+                "filter_key": "50_demos"
+            },
+            {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_doors/OpenDoubleDoor/2024-04-26/demo_gentex_im128_randcams.hdf5",
                 "horizon": 1000,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_doors/CloseDoubleDoor/mg/2024-05-04-22-22-42_and_2024-05-08-06-02-36/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_doors/CloseDoubleDoor/2024-04-29/demo_gentex_im128_randcams.hdf5",
                 "horizon": 700,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_drawer/OpenDrawer/mg/2024-05-04-22-38-42/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_drawer/OpenDrawer/2024-05-03/demo_gentex_im128_randcams.hdf5",
                 "horizon": 500,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_drawer/CloseDrawer/mg/2024-05-09-09-32-19/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_drawer/CloseDrawer/2024-04-30/demo_gentex_im128_randcams.hdf5",
+                "horizon": 500,
+                "filter_key": "50_demos"
+            },
+            {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_sink/TurnOnSinkFaucet/2024-04-25/demo_gentex_im128_randcams.hdf5",
+                "horizon": 500,
+                "filter_key": "50_demos"
+            },
+            {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_sink/TurnOffSinkFaucet/2024-04-25/demo_gentex_im128_randcams.hdf5",
+                "horizon": 500,
+                "filter_key": "50_demos"
+            },
+            {
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_sink/TurnSinkSpout/2024-04-29/demo_gentex_im128_randcams.hdf5",
                 "horizon": 500,
                 "filter_key": "50_demos"
             },
              {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_sink/TurnOnSinkFaucet/mg/2024-05-04-22-17-46/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_stove/TurnOnStove/2024-05-02/demo_gentex_im128_randcams.hdf5",
                 "horizon": 500,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_sink/TurnOffSinkFaucet/mg/2024-05-04-22-17-26/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_stove/TurnOffStove/2024-05-02/demo_gentex_im128_randcams.hdf5",
                 "horizon": 500,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_sink/TurnSinkSpout/mg/2024-05-09-09-31-12/demo_gentex_im128_randcams.hdf5",
-                "horizon": 500,
-                "filter_key": "50_demos"
-            },
-            {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_stove/TurnOnStove/mg/2024-05-08-09-20-31/demo_gentex_im128_randcams.hdf5",
-                "horizon": 500,
-                "filter_key": "50_demos"
-            },
-            {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_stove/TurnOffStove/mg/2024-05-08-09-20-45/demo_gentex_im128_randcams.hdf5",
-                "horizon": 500,
-                "filter_key": "50_demos"
-            },
-            {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_coffee/CoffeeSetupMug/mg/2024-05-04-22-22-13_and_2024-05-08-05-52-13/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_coffee/CoffeeSetupMug/2024-04-25/demo_gentex_im128_randcams.hdf5",
                 "horizon": 600,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_coffee/CoffeeServeMug/mg/2024-05-04-22-21-50/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_coffee/CoffeeServeMug/2024-05-01/demo_gentex_im128_randcams.hdf5",
                 "horizon": 600,
                 "filter_key": "50_demos"
             },
             {
-                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_coffee/CoffeePressButton/mg/2024-05-04-22-21-32/demo_gentex_im128_randcams.hdf5",
+                "path": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_coffee/CoffeePressButton/2024-04-25/demo_gentex_im128_randcams.hdf5",
                 "horizon": 300,
                 "filter_key": "50_demos"
             }
         ],
-        "output_dir": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-0",
+        "output_dir": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-0",
         "num_data_workers": 5,
         "hdf5_cache_mode": null,
         "hdf5_use_swmr": true,
@@ -184,7 +203,7 @@
         "goal_mode": null,
         "cuda": true,
         "batch_size": 16,
-        "num_epochs": 1,
+        "num_epochs": 2,
         "max_grad_norm": 100.0,
         "seed": 999,
         "action_config": {
@@ -270,7 +289,7 @@
             "num_heads": 8
         },
         "language_conditioned": false,
-        "progress_dim_size": 32
+        "progress_dim_size": 0
     },
     "observation": {
         "modalities": {
