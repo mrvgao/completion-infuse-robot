@@ -77,7 +77,7 @@ def extract_and_export_image(all_demo_dataset):
                     complete_rate,
                     task_description,
                     with_complete_rate=True,
-                    write_image=True,
+                    write_image=False,
                     with_image_format_change=False
                 )
 
