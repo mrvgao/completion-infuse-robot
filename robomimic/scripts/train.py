@@ -216,8 +216,10 @@ def train(config, device):
         progress_provider = progress_provider.to(device)
 
         print('model progress model: ', progress_provider)
-        progress_provider.eval()
-        model.state_mapping_model.eval()
+        if progress_provider:
+            progress_provider.eval()
+        if model.state_mapping_model:
+            model.state_mapping_model.eval()
         model.progress_provider = progress_provider
     else:
         progress_provider = None
