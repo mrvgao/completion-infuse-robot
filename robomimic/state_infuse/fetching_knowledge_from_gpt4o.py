@@ -36,6 +36,8 @@ def extract_and_export_image(all_demo_dataset):
         # (task, progress) : state
     }
 
+    errors_recoding = {}
+
     for di, demo_dataset in enumerate(all_demo_dataset.datasets):
         exporting_dataset = demo_dataset
 
@@ -44,7 +46,7 @@ def extract_and_export_image(all_demo_dataset):
         print('PROCESSING... dataset index with: ', di)
 
         for i in tqdm(range(len(exporting_dataset))):
-            if i > 100: break
+            if i > 50: break
 
             left_image = exporting_dataset[i]['obs'][eye_names[0]][0]
             hand_image = exporting_dataset[i]['obs'][eye_names[1]][0]
@@ -90,15 +92,18 @@ def extract_and_export_image(all_demo_dataset):
 
                     internal_state = ast.literal_eval(internal_state)
 
-                    print('get response: ', internal_state)
-
                     task_progress_states_mapping[save_key] = internal_state
                 except Exception as e:
                     print('get error: ', e)
                     print('when processing task: ', task_description, ' with progress: ', complete_rate)
 
-        with open('task_progress_states_mapping.pkl', 'wb') as f:
+                    errors_recoding[(task_description, complete_rate)] = e
+
+        with open('state_db/task_progress_states_mapping.pkl', 'wb') as f:
             pickle.dump(task_progress_states_mapping, f)
+
+        with open('state_db/error_recoding.pkl', 'wb') as f:
+            pickle.dump(errors_recoding, f)
 
 
 def generate_concated_images_from_demo_path(task_name=None, file_path=None):
