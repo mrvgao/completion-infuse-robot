@@ -78,7 +78,7 @@ def extract_and_export_image(all_demo_dataset):
             demo_index_offset = 0 if exporting_dataset.pad_frame_stack else (exporting_dataset.n_frame_stack - 1)
             index_in_demo = i - demo_start_index + demo_index_offset
 
-            complete_rate = round(index_in_demo / demo_length, 1)
+            complete_rate = round(index_in_demo / demo_length, 2)
 
             task_description = exporting_dataset._demo_id_to_demo_lang_str[demo_id]
 
@@ -115,11 +115,15 @@ def extract_and_export_image(all_demo_dataset):
 
                     errors_recoding[(task_description, complete_rate)] = e
 
-        with open('state_db/task_progress_states_mapping.pkl', 'wb') as f:
-            pickle.dump(task_progress_states_mapping, f)
+            save_dir = os.path.join('state_db', task_description.replace(' ', '_').replace('/', '_'))
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
 
-        with open('state_db/error_recoding.pkl', 'wb') as f:
-            pickle.dump(errors_recoding, f)
+            with open(os.path.join(save_dir, 'task_progress_states_mapping.pkl'), 'wb') as f:
+                pickle.dump(task_progress_states_mapping, f)
+
+            with open(os.path.join(save_dir, 'error_recoding.pkl'), 'wb') as f:
+                pickle.dump(errors_recoding, f)
 
 
 def generate_concated_images_from_demo_path(task_name=None, file_path=None):
