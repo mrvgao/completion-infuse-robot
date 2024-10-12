@@ -66,10 +66,6 @@ def extract_and_export_image(all_demo_dataset):
         print('PROCESSING... dataset index with: ', di)
 
         for i in tqdm(range(len(exporting_dataset))):
-            left_image = exporting_dataset[i]['obs'][eye_names[0]][0]
-            hand_image = exporting_dataset[i]['obs'][eye_names[1]][0]
-            right_image = exporting_dataset[i]['obs'][eye_names[2]][0]
-
             demo_id = exporting_dataset._index_to_demo_id[i]
             demo_start_index = exporting_dataset._demo_id_to_start_indices[demo_id]
             demo_length = exporting_dataset._demo_id_to_demo_length[demo_id]
@@ -85,6 +81,10 @@ def extract_and_export_image(all_demo_dataset):
             save_key = (task_description, complete_rate)
 
             if save_key not in task_progress_states_mapping:
+                left_image = exporting_dataset[i]['obs'][eye_names[0]][0]
+                hand_image = exporting_dataset[i]['obs'][eye_names[1]][0]
+                right_image = exporting_dataset[i]['obs'][eye_names[2]][0]
+
                 print(f'getting task {task_description} in progress {complete_rate} from openai')
 
                 left_image = format_image(left_image)
