@@ -107,7 +107,7 @@ def collect_task_data(all_demo_dataset):
     return task_data
 
 
-def process_task(task, task_progress_states_mapping):
+def process_task(task):
     save_key = task['save_key']
     task_description = task['task_description']
     complete_rate = task['complete_rate']
@@ -115,29 +115,28 @@ def process_task(task, task_progress_states_mapping):
     hand_image = task['hand_image']
     right_image = task['right_image']
 
-    if save_key not in task_progress_states_mapping:
-        try:
-            print(f'Getting task {task_description} in progress {complete_rate} from openai')
-            s = time.time()
+    try:
+        print(f'Getting task {task_description} in progress {complete_rate} from openai')
+        s = time.time()
 
-            # Call the function to get internal state
-            internal_state = get_internal_state_form_openai(
-                left_image, hand_image, right_image,
-                complete_rate, task_description,
-                with_complete_rate=True,
-                write_image=False,
-                with_image_format_change=False
-            )
+        # Call the function to get internal state
+        internal_state = get_internal_state_form_openai(
+            left_image, hand_image, right_image,
+            complete_rate, task_description,
+            with_complete_rate=True,
+            write_image=False,
+            with_image_format_change=False
+        )
 
-            # Clean the result
-            internal_state = re.sub(r'[\n\t]+', '', internal_state)
-            internal_state = internal_state.replace('python', '')
-            internal_state = internal_state.strip('`')
-            internal_state = ast.literal_eval(internal_state)
+        # Clean the result
+        internal_state = re.sub(r'[\n\t]+', '', internal_state)
+        internal_state = internal_state.replace('python', '')
+        internal_state = internal_state.strip('`')
+        internal_state = ast.literal_eval(internal_state)
 
-        except Exception as e:
-            print('get error: ', e)
-            print('when processing task: ', task_description, ' with progress: ', complete_rate)
+    except Exception as e:
+        print('get error: ', e)
+        print('when processing task: ', task_description, ' with progress: ', complete_rate)
 
     # Save the results to disk
     save_dir = os.path.join('state_db', task_description.replace(' ', '_').replace('/', '_'))
