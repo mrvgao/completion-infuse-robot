@@ -17,6 +17,9 @@ import cv2
 import re
 import ast
 import time
+import concurrent.futures
+from multiprocessing import cpu_count
+
 
 TASK_MAPPING_50_DEMO = {
     # "PnPCounterToCab": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToCab/2024-04-24/demo_gentex_im128_randcams.hdf5",
@@ -69,7 +72,7 @@ def collect_task_data(all_demo_dataset):
         print('PROCESSING... dataset index with: ', di)
 
         for i in tqdm(range(len(exporting_dataset))):
-            if i % 100 != 0: continue
+            if i % 500 != 0: continue
             demo_id = exporting_dataset._index_to_demo_id[i]
             demo_start_index = exporting_dataset._demo_id_to_start_indices[demo_id]
             demo_length = exporting_dataset._demo_id_to_demo_length[demo_id]
