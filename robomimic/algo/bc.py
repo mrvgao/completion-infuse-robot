@@ -155,8 +155,6 @@ class BC(PolicyAlgo):
 
             batch_size = first_frame_right_images.size()[0]
 
-            logging_openai_difference = False
-
             def process_index(index):
                 task_str = batch['task_str'][index]
                 task_complete_rate = current_completion_batch[index].cpu().numpy()
@@ -172,8 +170,11 @@ class BC(PolicyAlgo):
                                                                 state_key='Next Action'
                                                                 )
                 except KeyError as e:
-                    import pdb;
-                    pdb.set_trace()
+                    error_path = batch['hd5_file_path'][index]
+                    with open('error_log.txt', 'a') as f:
+                        f.write(f'{error_path}\n')
+                        f.write(f'{task_str} : {task_complete_rate}\n')
+                        f.write(f'{e}\n\n')
                     print(e)
                     next_action = ""
 
