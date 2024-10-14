@@ -63,6 +63,7 @@ def collect_task_data(all_demo_dataset):
         all_demo_dataset = [all_demo_dataset]
 
     for di, demo_dataset in enumerate(all_demo_dataset):
+        if di > 100: break
         exporting_dataset = demo_dataset
         eye_names = ['robot0_agentview_left_image', 'robot0_eye_in_hand_image', 'robot0_agentview_right_image']
 
@@ -85,8 +86,6 @@ def collect_task_data(all_demo_dataset):
                 left_image = exporting_dataset[i]['obs'][eye_names[0]][0]
                 hand_image = exporting_dataset[i]['obs'][eye_names[1]][0]
                 right_image = exporting_dataset[i]['obs'][eye_names[2]][0]
-
-                print(f'Collecting task {task_description} in progress {complete_rate} for openai')
 
                 task_data.append({
                     "save_key": save_key,
@@ -151,7 +150,7 @@ def extract_and_export_image_parallel(all_demo_dataset):
     task_progress_states_mapping = {}
 
     # Collect all tasks into a container and update task_progress_states_mapping
-    task_data, errors_recoding = collect_task_data(all_demo_dataset)
+    task_data = collect_task_data(all_demo_dataset)
 
     # Process tasks in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count()) as executor:
