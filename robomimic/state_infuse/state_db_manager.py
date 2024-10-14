@@ -72,8 +72,14 @@ if __name__ == '__main__':
     result = db_manager.retrieve_data("turn on the sink faucet", 0.12)
     print(result)
 
-    result = db_manager.retrieve_data("turn on the sink faucet", 0.123)
-    print(result)
+    try:
+        result = db_manager.retrieve_data("turn on the sink faucet", 0.123)
+        print(result)
+    except KeyError as e:
+        print(e)
 
-    result = db_manager.retrieve_data("turn on the sink faucet A", 0.8)
-    print(result)
+    try:
+        result = db_manager.retrieve_data("turn on the sink faucet A", 0.8)
+        print(result)
+    except KeyError as e:
+        print(e)
