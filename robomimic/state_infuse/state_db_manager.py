@@ -73,7 +73,7 @@ class TaskDBManager:
         if not record:
             raise KeyError(f"Task {task_name} with float {task_float} not found in any database")
         elif state_key:
-            if state_key in record:
+            if state_key:
                 return record[state_key]
             else:
                 return record
