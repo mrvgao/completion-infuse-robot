@@ -63,13 +63,13 @@ def collect_task_data(all_demo_dataset):
         all_demo_dataset = [all_demo_dataset]
 
     for di, demo_dataset in enumerate(all_demo_dataset):
-        if di > 10: break
         exporting_dataset = demo_dataset
         eye_names = ['robot0_agentview_left_image', 'robot0_eye_in_hand_image', 'robot0_agentview_right_image']
 
         print('PROCESSING... dataset index with: ', di)
 
         for i in tqdm(range(len(exporting_dataset))):
+            if i % 100 != 0: continue
             demo_id = exporting_dataset._index_to_demo_id[i]
             demo_start_index = exporting_dataset._demo_id_to_start_indices[demo_id]
             demo_length = exporting_dataset._demo_id_to_demo_length[demo_id]
