@@ -82,7 +82,7 @@ if __name__ == '__main__':
     print("Time to load db:", time.time() - s)
 
     s = time.time()
-    result = db_manager.retrieve_data("turn on the sink faucet", 0.1)
+    result = db_manager.retrieve_data("pick the fish from the plate and place it in the pan", 0.1)
     print(result)
     print("Time to load db:", time.time() - s)
 
