@@ -171,7 +171,7 @@ class BC(PolicyAlgo):
                                                                 )
                 except KeyError as e:
                     print(e)
-                    next_action = None
+                    next_action = ""
 
                 print(f'task {index} : {task_str} : {next_action}')
 
