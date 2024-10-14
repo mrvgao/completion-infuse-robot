@@ -244,7 +244,7 @@ def generate_concated_images_from_demo_path(task_name=None, file_path=None):
     # TODO: combine trainset and validset
     demo_dataset = trainset
 
-    extract_and_export_image(demo_dataset)
+    extract_and_export_image_parallel(demo_dataset)
 
 
 if __name__ == '__main__':
