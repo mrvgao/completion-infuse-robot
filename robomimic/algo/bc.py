@@ -162,6 +162,9 @@ class BC(PolicyAlgo):
                 task_complete_rate = current_completion_batch[index].cpu().numpy()
                 task_complete_rate = task_complete_rate[0]
 
+                task_complete_rate = round(task_complete_rate, 2)
+                import pdb; pdb.set_trace()
+
                 global task_db_manager
 
                 try:
