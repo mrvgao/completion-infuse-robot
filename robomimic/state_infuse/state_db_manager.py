@@ -69,6 +69,7 @@ class TaskDBManager:
                 record = self.task_progress_states_mapping[nearest_key]
 
         # If the key is not found in either dictionary
+        print('record: ', record)
 
         if not record:
             raise KeyError(f"Task {task_name} with float {task_float} not found in any database")
