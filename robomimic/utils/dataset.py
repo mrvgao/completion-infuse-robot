@@ -540,6 +540,7 @@ class SequenceDataset(torch.utils.data.Dataset):
 
         meta['obs']['progresses'] = np.array([ [p] ])
         meta['task_str'] = self._demo_id_to_demo_lang_str[demo_id]
+        meta['hd5_file_path'] = self.hdf5_file.filename
 
         if self.load_next_obs:
             meta["next_obs"] = self.get_obs_sequence_from_demo(
