@@ -28,6 +28,9 @@ from robomimic.state_infuse.utils import parse_next_action
 import cv2
 import os
 import random
+from robomimic.state_infuse.state_db_manager import TaskDBManager
+
+task_db_manager = TaskDBManager("./state_db")
 
 
 @register_algo_factory_func("bc")
@@ -123,20 +126,6 @@ class BC(PolicyAlgo):
         # this minimizes the amount of data transferred to GPU
         return TensorUtils.to_float(TensorUtils.to_device(input_batch, self.device))
 
-    def train_on_batch_for_progress_provider(self, batch, epoch):
-        current_completion_batch = batch['obs']['progresses'][:, 0, :]
-        current_task_emb_batch = batch['obs'][LANG_EMB_KEY][:, 0, :]
-
-        timestep = batch['obs'][LANG_EMB_KEY].size()[1]
-
-        import pdb; pdb.set_trace()
-
-        first_frame_left_images = batch['obs']['robot0_agentview_left_image'][:, 0, :]
-        first_frame_hand_images = batch['obs']['robot0_eye_in_hand_image'][:, 0, :]
-        first_frame_right_images = batch['obs']['robot0_agentview_right_image'][:, 0, :]
-
-        self.total_step += 1
-
     def train_on_batch(self, batch, epoch, validate=False, lang_encoder=None):
         """
         Training on a single batch of data.
@@ -169,67 +158,22 @@ class BC(PolicyAlgo):
             logging_openai_difference = False
 
             def process_index(index):
-                left_image = first_frame_left_images[index].cpu().numpy()
-                hand_image = first_frame_hand_images[index].cpu().numpy()
-                right_image = first_frame_right_images[index].cpu().numpy()
                 task_str = batch['task_str'][index]
                 task_complete_rate = current_completion_batch[index].cpu().numpy()
                 task_complete_rate = task_complete_rate[0]
 
-                if self.total_step % 20 == 0:
-                    internal_state = get_internal_state_form_openai(
-                            left_image, hand_image, right_image,
-                            task_complete_rate, task_str,
-                            with_complete_rate=True, write_image=logging_openai_difference
-                    )
-                else:
-                    internal_state = ""
+                global task_db_manager
 
-                next_action = internal_state
+                try:
+                    next_action = task_db_manager.retrieve_data(task_str,
+                                                                task_complete_rate,
+                                                                state_key='Next Action'
+                                                                )
+                except KeyError as e:
+                    print(e)
+                    next_action = None
 
-                # if next_action is None:
-                #     print(f'Error: task {index} : {task_str} : {internal_state} : {task_complete_rate} : {left_image.shape} : {hand_image.shape} : {right_image.shape} : {task_str} : {task_complete_rate} : {internal_state} : {next_action}')
-                #     next_action = ""
-                # else:
                 print(f'task {index} : {task_str} : {next_action}')
-
-                if logging_openai_difference:
-                    path_task_str = task_str.replace(' ', '_')
-                    recording_dir = f'recording_{self.total_step}_{index}_{path_task_str}'
-                    os.makedirs(recording_dir, exist_ok=True)
-
-                    [cv2.imwrite(os.path.join(recording_dir, f"image_{i}.png"), cv2.cvtColor((img.transpose(1, 2, 0) * 255).astype(np.uint8), cv2.COLOR_RGB2BGR))
-                        for i, img in enumerate([
-                            left_image,
-                            hand_image,
-                            right_image])
-                     ]
-
-                    with open(os.path.join(recording_dir, 'openai_response_state_with_complete_rate.txt'), 'w') as f:
-                        f.write(internal_state)
-
-                    internal_state_wo = get_internal_state_form_openai(
-                        left_image, hand_image, right_image,
-                        0, task_str, with_complete_rate=False
-                    )
-
-                    with open(os.path.join(recording_dir, 'openai_response_state_without_complete_rate.txt'), 'w') as f:
-                        f.write(internal_state_wo)
-
-                    internal_state_rand = get_internal_state_form_openai(
-                        left_image, hand_image, right_image,
-                        random.random(), task_str, with_complete_rate=False
-                    )
-
-                    with open(os.path.join(recording_dir, 'openai_response_state_with_random_complete_rate.txt'), 'w') as f:
-                        f.write(internal_state_rand)
-
-                    openai_response = f'task {index} : {task_str} : {internal_state}'
-                    print(openai_response)
-                    with open('output.txt', 'a') as f:
-                        f.write(openai_response + '\n')
-                else:
-                    internal_state = None
 
                 return next_action
 
@@ -240,27 +184,6 @@ class BC(PolicyAlgo):
 
             internal_states_string_from_openai = list(results)
 
-            self.total_step += 1
-
-            # def process_index(index):
-            #     if internal_states_string_from_openai[index] is None:
-            #         return np.zeros(self.openai_emb_size)
-            #     else:
-            #         try:
-            #             # emb = get_openai_embedding([internal_states_string_from_openai[index]])
-            #             if emb and emb[0] is not None:
-            #                 return emb[0]
-            #             else:
-            #                 return np.zeros(self.openai_emb_size)
-            #         except Exception as e:
-            #             print(e)
-            #             return np.zeros(self.openai_emb_size)
-            #
-            # with concurrent.futures.ThreadPoolExecutor() as executor:
-            #     # Map the function to each index in parallel
-            #     results = list(executor.map(process_index, range(batch_size)))
-
-            # next_action_embedding = get_openai_embedding(internal_states_string_from_openai)
             next_action_embedding = lang_encoder.get_lang_emb(internal_states_string_from_openai)
             next_action_embedding = TensorUtils.to_numpy(next_action_embedding)
 
