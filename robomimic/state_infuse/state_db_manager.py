@@ -76,7 +76,7 @@ class TaskDBManager:
             if state_key in record:
                 return record[state_key]
             else:
-                raise record
+                return record
 
 
 if __name__ == '__main__':
@@ -92,7 +92,7 @@ if __name__ == '__main__':
     print("Time to load db:", time.time() - s)
 
     s = time.time()
-    result = db_manager.retrieve_data("turn on the sink faucet", 0.12, 'next_action')
+    result = db_manager.retrieve_data("turn on the sink faucet", 0.12, 'Next Action')
     print(result)
     print("Time to load db:", time.time() - s)
 
