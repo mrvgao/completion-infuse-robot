@@ -63,7 +63,7 @@ def collect_task_data(all_demo_dataset):
         all_demo_dataset = [all_demo_dataset]
 
     for di, demo_dataset in enumerate(all_demo_dataset):
-        if di % 10000 != 0: continue
+        if di > 1000: break
         exporting_dataset = demo_dataset
         eye_names = ['robot0_agentview_left_image', 'robot0_eye_in_hand_image', 'robot0_agentview_right_image']
 
