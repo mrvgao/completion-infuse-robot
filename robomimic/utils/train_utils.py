@@ -878,6 +878,7 @@ def run_epoch(model, data_loader, epoch, validate=False, num_steps=None, obs_nor
         timing_stats["Process_Batch"].append(time.time() - t)
 
         input_batch['task_str'] = batch['task_str']
+        input_batch['hd5_file_path'] = batch['hd5_file_path']
 
         # forward and backward pass
         t = time.time()
