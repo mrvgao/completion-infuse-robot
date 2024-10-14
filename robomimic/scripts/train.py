@@ -306,7 +306,6 @@ def train(config, device):
                 num_steps=train_num_steps,
                 obs_normalization_stats=obs_normalization_stats,
                 lang_encoder=lang_encoder,
-                only_train_progress_provider=config.experiment.only_train_progress_model,
             )
             model.on_epoch_end(epoch)
 
