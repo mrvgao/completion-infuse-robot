@@ -57,6 +57,8 @@ class TaskDBManager:
         """
         Retrieve the corresponding dictionary value from task_progress_states_mapping or error_recoding.
         """
+        task_float = round(task_float, 2)
+
         key = (task_name, task_float)
         # First, try to find the key in task_progress_states_mapping
         record = None
