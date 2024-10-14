@@ -182,9 +182,12 @@ class BC(PolicyAlgo):
                 return next_action
 
             # Use ThreadPoolExecutor for parallel processing
-            with concurrent.futures.ThreadPoolExecutor() as executor:
+            # with concurrent.futures.ThreadPoolExecutor() as executor:
                 # Create a list of tasks for the executor
-                results = list(executor.map(process_index, range(batch_size)))
+                # results = list(executor.map(process_index, range(batch_size)))
+            results = []
+            for i in range(batch_size):
+                results.append(process_index(i))
 
             internal_states_string_from_openai = list(results)
 
