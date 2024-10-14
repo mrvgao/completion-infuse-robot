@@ -163,7 +163,6 @@ class BC(PolicyAlgo):
                 task_complete_rate = task_complete_rate[0]
 
                 task_complete_rate = round(task_complete_rate, 2)
-                import pdb; pdb.set_trace()
 
                 global task_db_manager
 
@@ -173,6 +172,8 @@ class BC(PolicyAlgo):
                                                                 state_key='Next Action'
                                                                 )
                 except KeyError as e:
+                    import pdb;
+                    pdb.set_trace()
                     print(e)
                     next_action = ""
 
