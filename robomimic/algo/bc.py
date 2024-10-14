@@ -173,7 +173,7 @@ class BC(PolicyAlgo):
                     print(e)
                     next_action = ""
 
-                print(f'task {index} : {task_str} : {next_action}')
+                # print(f'task {index} : {task_str} : {next_action}')
 
                 return next_action
 
