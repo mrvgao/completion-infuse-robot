@@ -63,7 +63,7 @@ def collect_task_data(all_demo_dataset):
         all_demo_dataset = [all_demo_dataset]
 
     for di, demo_dataset in enumerate(all_demo_dataset):
-        if di % 100 != 0: continue
+        if di % 10000 != 0: continue
         exporting_dataset = demo_dataset
         eye_names = ['robot0_agentview_left_image', 'robot0_eye_in_hand_image', 'robot0_agentview_right_image']
 
@@ -168,11 +168,14 @@ def generate_concated_images_from_demo_path(task_name=None, file_path=None):
     ext_cfg = json.load(open(config_path_compsoite, 'r'))
 
     if task_name:
-        ext_cfg['train']['data'].append({'path':file_path if file_path else TASK_MAPPING_50_DEMO.get(task_name)})
+        ext_cfg['train']['data'].append(
+            {'path':file_path if file_path else TASK_MAPPING_50_DEMO.get(task_name),
+             'filter_key': '50_demos'}
+        )
         # print('loading from path ', TASK_PATH_MAPPING[task_name])
     else:
         for path in TASK_MAPPING_50_DEMO.values():
-            ext_cfg['train']['data'].append({'path': path})
+            ext_cfg['train']['data'].append({'path': path, 'filter_key': '50_demos'})
 
     config = config_factory(ext_cfg["algo_name"])
 
