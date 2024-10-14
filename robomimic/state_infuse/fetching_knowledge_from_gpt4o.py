@@ -16,6 +16,7 @@ import pickle
 import cv2
 import re
 import ast
+import time
 
 TASK_MAPPING_50_DEMO = {
     # "PnPCounterToCab": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_pnp/PnPCounterToCab/2024-04-24/demo_gentex_im128_randcams.hdf5",
@@ -97,6 +98,7 @@ def extract_and_export_image(all_demo_dataset):
                 right_image = format_image(right_image)
 
                 try:
+                    s = time.time()
                     internal_state = get_internal_state_form_openai(
                         left_image, hand_image,
                         right_image,
