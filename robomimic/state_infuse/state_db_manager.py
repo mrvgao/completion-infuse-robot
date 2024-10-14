@@ -83,6 +83,8 @@ if __name__ == '__main__':
     db_manager = TaskDBManager("state_db")
     print("Time to load db:", time.time() - s)
 
+    assert "pick the fish from the plate and place it in the pan" in db_manager.task_name_to_floats
+
     s = time.time()
     result = db_manager.retrieve_data("pick the fish from the plate and place it in the pan", 0.1)
     print(result)
