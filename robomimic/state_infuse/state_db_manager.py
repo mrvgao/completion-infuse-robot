@@ -53,24 +53,30 @@ class TaskDBManager:
         nearest_float = min(float_list, key=lambda x: abs(x - task_float))
         return nearest_float
 
-    def retrieve_data(self, task_name, task_float):
+    def retrieve_data(self, task_name, task_float, state_key=None):
         """
         Retrieve the corresponding dictionary value from task_progress_states_mapping or error_recoding.
         """
         key = (task_name, task_float)
         # First, try to find the key in task_progress_states_mapping
+        record = None
         if key in self.task_progress_states_mapping:
-            return self.task_progress_states_mapping[key]
-
-        # If not found in task_progress_states_mapping, find the nearest float and check both dictionaries
-        if task_name in self.task_name_to_floats:
+            record = self.task_progress_states_mapping[key]
+        elif task_name in self.task_name_to_floats:
             nearest_float = self.find_nearest_float(task_name, task_float)
             nearest_key = (task_name, nearest_float)
             if nearest_key in self.task_progress_states_mapping:
-                return self.task_progress_states_mapping[nearest_key]
+                record = self.task_progress_states_mapping[nearest_key]
 
         # If the key is not found in either dictionary
-        raise KeyError(f"Task {task_name} with float {task_float} not found in any database")
+
+        if not record:
+            raise KeyError(f"Task {task_name} with float {task_float} not found in any database")
+        elif state_key:
+            if state_key in record:
+                return record[state_key]
+            else:
+                raise record
 
 
 if __name__ == '__main__':
@@ -86,7 +92,7 @@ if __name__ == '__main__':
     print("Time to load db:", time.time() - s)
 
     s = time.time()
-    result = db_manager.retrieve_data("turn on the sink faucet", 0.12)
+    result = db_manager.retrieve_data("turn on the sink faucet", 0.12, 'next_action')
     print(result)
     print("Time to load db:", time.time() - s)
 
