@@ -64,7 +64,7 @@ class TaskDBManager:
 
 
 if __name__ == '__main__':
-    db_manager = TaskDBManager("stata_db")
+    db_manager = TaskDBManager("state_db")
     result = db_manager.retrieve_data("turn on the sink faucet", 0.9)
     print(result)
 
