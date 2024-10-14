@@ -63,21 +63,34 @@ class TaskDBManager:
 
 
 if __name__ == '__main__':
+    import time
+
+    s = time.time()
     db_manager = TaskDBManager("state_db")
+    print("Time to load db:", time.time() - s)
+
+    s = time.time()
     result = db_manager.retrieve_data("turn on the sink faucet", 0.1)
     print(result)
+    print("Time to load db:", time.time() - s)
 
+    s = time.time()
     result = db_manager.retrieve_data("turn on the sink faucet", 0.12)
     print(result)
+    print("Time to load db:", time.time() - s)
 
+    s = time.time()
     try:
         result = db_manager.retrieve_data("turn on the sink faucet", 0.123)
         print(result)
     except KeyError as e:
         print(e)
+    print("Time to load db:", time.time() - s)
 
+    s = time.time()
     try:
         result = db_manager.retrieve_data("turn on the sink faucet A", 0.8)
         print(result)
     except KeyError as e:
         print(e)
+    print("Time to load db:", time.time() - s)
