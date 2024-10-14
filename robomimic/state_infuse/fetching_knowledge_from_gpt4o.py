@@ -72,7 +72,6 @@ def collect_task_data(all_demo_dataset):
         print('PROCESSING... dataset index with: ', di)
 
         for i in tqdm(range(len(exporting_dataset))):
-            if i % 500 != 0: continue
             demo_id = exporting_dataset._index_to_demo_id[i]
             demo_start_index = exporting_dataset._demo_id_to_start_indices[demo_id]
             demo_length = exporting_dataset._demo_id_to_demo_length[demo_id]
