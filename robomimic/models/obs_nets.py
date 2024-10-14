@@ -995,7 +995,7 @@ class MIMO_Transformer(Module):
         # decoder for output modalities
         self.nets["decoder"] = ObservationDecoder(
             decode_shapes=self.output_shapes,
-            input_feat_dim=transformer_embed_dim * 2,
+            input_feat_dim=transformer_embed_dim,
         )
 
         self.transformer_context_length = transformer_context_length
@@ -1123,8 +1123,8 @@ class MIMO_Transformer(Module):
             transformer_encoder_outputs = self.nets["transformer"].forward(transformer_embeddings)
 
         if completion_embedding is not None:
-            # transformer_encoder_outputs = transformer_encoder_outputs + completion_embedding
-            transformer_encoder_outputs = torch.cat([transformer_encoder_outputs, completion_embedding], dim=-1)
+            transformer_encoder_outputs = transformer_encoder_outputs + completion_embedding
+            # transformer_encoder_outputs = torch.cat([transformer_encoder_outputs, completion_embedding], dim=-1)
 
         transformer_outputs = transformer_encoder_outputs
         # apply decoder to each timestep of sequence to get a dictionary of outputs
