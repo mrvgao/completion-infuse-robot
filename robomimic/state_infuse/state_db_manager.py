@@ -6,10 +6,13 @@ from collections import defaultdict
 class TaskDBManager:
     def __init__(self, db_root):
         self.db_root = db_root
+        # Original structure for fast retrieval
         self.task_progress_states_mapping = defaultdict(dict)
         self.error_recoding = defaultdict(dict)
+
+        # Auxiliary dictionary for quick access to tasks by task name (no float) for missing cases
+        self.task_name_to_floats = defaultdict(list)
         self._load_all_data()
-        print("initial db loaded complete!")
 
     def _load_all_data(self):
         """
@@ -26,22 +29,29 @@ class TaskDBManager:
                     with open(progress_file, 'rb') as f:
                         progress_data = pickle.load(f)
                         self.task_progress_states_mapping.update(progress_data)
+                        for key in progress_data.keys():
+                            task_name, task_float = key
+                            self.task_name_to_floats[task_name].append(task_float)
 
                 if os.path.exists(error_file):
                     with open(error_file, 'rb') as f:
                         error_data = pickle.load(f)
                         self.error_recoding.update(error_data)
+                        for key in error_data.keys():
+                            task_name, task_float = key
+                            self.task_name_to_floats[task_name].append(task_float)
 
-    def find_nearest_float(self, task_name, float_val, dictionary):
+    def find_nearest_float(self, task_name, task_float):
         """
-        Find the nearest float for the given task_name in the provided dictionary.
+        Find the nearest float for the given task_name in the task_name_to_floats auxiliary dictionary.
         """
-        keys = [(t, f) for (t, f) in dictionary if t == task_name]
-        if not keys:
+        if task_name not in self.task_name_to_floats:
             raise KeyError(f"No data found for task name {task_name}")
-        nearest_key = min(keys, key=lambda x: abs(x[1] - float_val))
 
-        return dictionary[nearest_key]
+        # Find the closest float in the list for the task_name
+        float_list = self.task_name_to_floats[task_name]
+        nearest_float = min(float_list, key=lambda x: abs(x - task_float))
+        return nearest_float
 
     def retrieve_data(self, task_name, task_float):
         """
@@ -52,14 +62,15 @@ class TaskDBManager:
         if key in self.task_progress_states_mapping:
             return self.task_progress_states_mapping[key]
 
-        # If not found in task_progress_states_mapping, look in error_recoding
-        # if key in self.error_recoding:
-            # If there's a matching task_name in task_progress_states_mapping, find the nearest float
-        if any(k[0] == task_name for k in self.task_progress_states_mapping):
-            return self.find_nearest_float(task_name, task_float, self.task_progress_states_mapping)
-        else:
-                # If no matching task_name in task_progress_states_mapping, return the error_recoding value
-            raise KeyError(f"Task {task_name} with float {task_float} not found in any database")
+        # If not found in task_progress_states_mapping, find the nearest float and check both dictionaries
+        if task_name in self.task_name_to_floats:
+            nearest_float = self.find_nearest_float(task_name, task_float)
+            nearest_key = (task_name, nearest_float)
+            if nearest_key in self.task_progress_states_mapping:
+                return self.task_progress_states_mapping[nearest_key]
+
+        # If the key is not found in either dictionary
+        raise KeyError(f"Task {task_name} with float {task_float} not found in any database")
 
 
 if __name__ == '__main__':
