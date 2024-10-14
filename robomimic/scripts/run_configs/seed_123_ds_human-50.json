@@ -1,5 +1,6 @@
 {
     "algo_name": "bc",
+    "cuda_mark": "cuda:5",
     "experiment": {
         "name": "seed_123_ds_human-50",
         "validate": false,
