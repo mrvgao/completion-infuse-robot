@@ -97,6 +97,7 @@ def extract_and_export_image(all_demo_dataset):
                 right_image = format_image(right_image)
 
                 try:
+                    s = time.time()
                     internal_state = get_internal_state_form_openai(
                         left_image, hand_image,
                         right_image,
@@ -106,6 +107,7 @@ def extract_and_export_image(all_demo_dataset):
                         write_image=False,
                         with_image_format_change=False
                     )
+                    print('time cost: ', time.time() - s)
 
                     internal_state = re.sub(r'[\n\t]+', '', internal_state)
                     internal_state = internal_state.replace('python', '')
