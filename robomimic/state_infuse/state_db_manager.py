@@ -9,6 +9,7 @@ class TaskDBManager:
         self.task_progress_states_mapping = defaultdict(dict)
         self.error_recoding = defaultdict(dict)
         self._load_all_data()
+        print("initial db loaded complete!")
 
     def _load_all_data(self):
         """
