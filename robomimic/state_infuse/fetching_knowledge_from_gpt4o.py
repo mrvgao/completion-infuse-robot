@@ -190,7 +190,7 @@ def generate_concated_images_from_demo_path(task_name=None, file_path=None):
 
     if task_name:
         ext_cfg['train']['data'].append(
-            {'path':file_path if file_path else TASK_PATH_MAPPING.get(task_name)}
+            {'path':file_path}
         )
         # print('loading from path ', TASK_PATH_MAPPING[task_name])
     else:
@@ -280,10 +280,10 @@ if __name__ == '__main__':
 
     # task_path_mapping = list(TASK_PATH_MAPPING.items())
 
-    # for key, value in TASK_PATH_MAPPING.items():
-    #     print('PROCESSING.... ', key)
-    #     print('FROM PATH.... ', value)
-    generate_concated_images_from_demo_path()
+    for key, value in TASK_PATH_MAPPING.items():
+        print('PROCESSING.... ', key)
+        print('FROM PATH.... ', value)
+        generate_concated_images_from_demo_path(key, value)
 
 
 
