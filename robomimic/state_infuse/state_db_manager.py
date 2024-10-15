@@ -22,8 +22,10 @@ class TaskDBManager:
             subdir_path = os.path.join(self.db_root, subdir)
             if os.path.isdir(subdir_path):
                 # Load task_progress_states_mapping.pkl
-                progress_file = os.path.join(subdir_path, "task_progress_states_mapping.pkl")
-                error_file = os.path.join(subdir_path, "error_recoding.pkl")
+                progress_file_single = os.path.join(subdir_path, "task_progress_states_mapping.pkl")
+                progress_file_double = os.path.join(subdir_path, "task_progress_states_mapping.pkl.pkl")
+
+                progress_file = progress_file_double if os.path.exists(progress_file_double) else progress_file_single
 
                 if os.path.exists(progress_file):
                     print(f"Loading data from {progress_file} and {error_file}")
@@ -31,14 +33,6 @@ class TaskDBManager:
                         progress_data = pickle.load(f)
                         self.task_progress_states_mapping.update(progress_data)
                         for key in progress_data.keys():
-                            task_name, task_float = key
-                            self.task_name_to_floats[task_name].append(task_float)
-
-                if os.path.exists(error_file):
-                    with open(error_file, 'rb') as f:
-                        error_data = pickle.load(f)
-                        self.error_recoding.update(error_data)
-                        for key in error_data.keys():
                             task_name, task_float = key
                             self.task_name_to_floats[task_name].append(task_float)
 
