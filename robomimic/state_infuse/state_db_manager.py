@@ -67,6 +67,9 @@ class TaskDBManager:
             raise KeyError(f"Task {task_name} with float {task_float} not found in any database")
 
 
+state_db = TaskDBManager("state_db")
+
+
 if __name__ == '__main__':
     import time
 

@@ -30,6 +30,7 @@ from tianshou.env import SubprocVectorEnv
 from robomimic.state_infuse.get_state_awarness_of_openai import get_embeddings as get_openai_embeddings
 from robomimic.state_infuse.get_state_awarness_of_openai import get_internal_state_form_openai
 from torchvision import models, transforms
+from robomimic.state_infuse.state_db_manager import state_db as task_db_manager
 
 
 def get_exp_dir(config, auto_remove_exp_dir=False):
@@ -321,7 +322,8 @@ def run_rollout(
     batched = isinstance(env, SubprocVectorEnv)
 
     ob_dict = env.reset()
-    policy.start_episode(lang=env._ep_lang_str)
+    task_str = env._ep_lang_str
+    policy.start_episode(lang=env.task_str)
 
     goal_dict = None
     if use_goals:
@@ -352,53 +354,39 @@ def run_rollout(
         else:
             policy_ob = ob_dict
             if with_progress_correct:
-                if step_i % 20 == 0:
-                    first_left_image = ob_dict['robot0_agentview_left_image'][0]
-                    first_hand_image = ob_dict['robot0_eye_in_hand_image'][0]
-                    first_right_image = ob_dict['robot0_agentview_right_image'][0]
-                    task_emb = torch.Tensor(policy._ep_lang_emb).unsqueeze(0).to(policy.policy.device)
+                task_emb = torch.Tensor(policy._ep_lang_emb).unsqueeze(0).to(policy.policy.device)
 
-                    first_left_image_transformed = resnet_transformer(first_left_image.transpose(1, 2, 0)).unsqueeze(0).to(policy.policy.device)
-                    first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(1, 2, 0)).unsqueeze(0).to(policy.policy.device)
-                    first_right_image_transformed = resnet_transformer(first_right_image.transpose(1, 2, 0)).unsqueeze(0).to(policy.policy.device)
+                # complete_rate_by_model = policy.policy.progress_provider(
+                #     first_left_image_transformed,
+                #     first_hand_image_transformed,
+                #     first_right_image_transformed,
+                #     task_emb
+                # )
 
-                    complete_rate_by_model = policy.policy.progress_provider(
-                        first_left_image_transformed,
-                        first_hand_image_transformed,
-                        first_right_image_transformed,
-                        task_emb
-                    )
+                complete_rate = step_i / horizon
 
-                    complete_rate = step_i / horizon
+                # complete_rate = complete_rate[0][0].cpu().detach().numpy()
 
-                    # complete_rate = complete_rate[0][0].cpu().detach().numpy()
+                next_action = task_db_manager.retrieve_data(task_str,
+                                                            complete_rate,
+                                                            state_key='Next Action'
+                                                            )
 
-                    task_str = env._ep_lang_str
+                # emb_from_openai = get_openai_embeddings([internal_state])
+                next_action_emb_from_clip = lang_encoder.get_lang_emb([internal_state])
+                next_action_emb_from_clip = TensorUtils.to_numpy(next_action_emb_from_clip)
+                next_action_emb_from_clip = torch.tensor(next_action_emb_from_clip).to(policy.policy.device).to(torch.float)
 
-                    internal_state = get_internal_state_form_openai(
-                        first_left_image,
-                        first_hand_image,
-                        first_right_image,
-                        complete_rate=complete_rate, task=task_str,
-                    )
+                # internal_states_embedding_np = np.array(emb_from_openai)
+                # embedding_tensor_from_openai = torch.tensor(next_action_emb_from_clip).to(policy.policy.device).to(torch.float)
+                complete_rate_ratio = torch.Tensor([complete_rate]).unsqueeze(0).to(policy.policy.device).to(torch.float)
 
-                    # emb_from_openai = get_openai_embeddings([internal_state])
-                    next_action_emb_from_clip = lang_encoder.get_lang_emb([internal_state])
-                    next_action_emb_from_clip = TensorUtils.to_numpy(next_action_emb_from_clip)
-                    next_action_emb_from_clip = torch.tensor(next_action_emb_from_clip).to(policy.policy.device).to(torch.float)
+                state_emb = policy.policy.state_mapping_model(
+                    complete_rate_ratio, task_emb,
+                    next_action_emb_from_clip
+                )
 
-                    # internal_states_embedding_np = np.array(emb_from_openai)
-                    # embedding_tensor_from_openai = torch.tensor(next_action_emb_from_clip).to(policy.policy.device).to(torch.float)
-                    complete_rate_ratio = torch.Tensor([complete_rate]).unsqueeze(0).to(policy.policy.device).to(torch.float)
-
-                    state_emb = policy.policy.state_mapping_model(
-                        complete_rate_ratio, task_emb,
-                        next_action_emb_from_clip
-                    )
-
-                    ac = policy(ob=policy_ob, goal=goal_dict, x_delta_emb=state_emb)
-                else:
-                    ac = policy(ob=policy_ob, goal=goal_dict) #, return_ob=True)
+                ac = policy(ob=policy_ob, goal=goal_dict, x_delta_emb=state_emb)
             else:
                 ac = policy(ob=policy_ob, goal=goal_dict)  # , return_ob=True)
 

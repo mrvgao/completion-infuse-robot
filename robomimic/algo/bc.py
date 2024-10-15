@@ -28,7 +28,7 @@ from robomimic.state_infuse.utils import parse_next_action
 import cv2
 import os
 import random
-
+from robomimic.state_infuse.state_db_manager import state_db as task_db_manager
 
 
 @register_algo_factory_func("bc")
