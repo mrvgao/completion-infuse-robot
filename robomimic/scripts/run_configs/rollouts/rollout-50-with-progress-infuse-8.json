@@ -1,12 +1,13 @@
 {
     "algo_name": "bc",
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/model_epoch_10.pth",
-    "cuda_mark": "cuda:6",
+    "cuda_mark": "cuda:5",
     "experiment": {
-        "name": "TASL-human-50-infuse-progress-32-with-openai-continue-train",
-        "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-0/TASL-human-50-without-completion-infuse/20241003220512/models/model_epoch_1000.pth",
+        "name": "TASL-human-50-infuse-progress-from-state-db-8-with-openai",
+        "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-8/TASL-human-50-infuse-progress-from-state-db-8-with-openai/20241014175510/models/model_epoch_200.pth",
+        "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-8/TASL-human-50-infuse-progress-from-state-db-8-with-openai/20241014175510/models/model_epoch_200_compltion_infuse.pth",
         "validate": false,
-        "only_rollout": false,
+        "only_rollout": true,
         "logging": {
             "terminal_output_to_txt": true,
             "log_tb": true,
@@ -23,7 +24,7 @@
             "on_best_rollout_return": false,
             "on_best_rollout_success_rate": false
         },
-        "epoch_every_n_steps": 100,
+        "epoch_every_n_steps": 50,
         "validation_epoch_every_n_steps": 50,
         "env": null,
         "additional_envs": null,
@@ -32,8 +33,8 @@
         "keep_all_videos": false,
         "video_skip": 5,
         "rollout": {
-            "enabled": false,
-            "n": 50,
+            "enabled": true,
+            "n": 25,
             "horizon": 500,
             "rate": 100,
             "warmstart": 0,
@@ -207,7 +208,7 @@
                 "filter_key": "50_demos"
             }
         ],
-        "output_dir": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-32",
+        "output_dir": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-8",
         "num_data_workers": 5,
         "hdf5_cache_mode": null,
         "hdf5_use_swmr": true,
@@ -224,7 +225,7 @@
         "goal_mode": null,
         "cuda": true,
         "batch_size": 16,
-        "num_epochs": 20,
+        "num_epochs": 200,
         "max_grad_norm": 100.0,
         "seed": 999,
         "action_config": {
@@ -310,7 +311,7 @@
             "num_heads": 8
         },
         "language_conditioned": false,
-        "progress_dim_size": 32
+        "progress_dim_size": 8
     },
     "observation": {
         "modalities": {
