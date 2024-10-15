@@ -323,7 +323,7 @@ def run_rollout(
 
     ob_dict = env.reset()
     task_str = env._ep_lang_str
-    policy.start_episode(lang=env.task_str)
+    policy.start_episode(lang=task_str)
 
     goal_dict = None
     if use_goals:
