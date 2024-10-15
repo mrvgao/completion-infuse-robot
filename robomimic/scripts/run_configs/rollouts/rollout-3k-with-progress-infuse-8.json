@@ -1,9 +1,9 @@
 {
     "algo_name": "bc",
-    "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/model_epoch_10.pth",
+    "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/best_model.pth",
     "cuda_mark": "cuda:6",
     "experiment": {
-        "name": "TASL-3k-infuse-progress-8-from-state-db-with-openai",
+        "name": "rollout-TASL-3k-infuse-progress-8-from-state-db-with-openai",
         "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-8/TASL-3k-infuse-progress-8-from-state-db-with-openai/20241014175511/models/model_epoch_200.pth",
         "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-8/TASL-3k-infuse-progress-8-from-state-db-with-openai/20241014175511/models/model_epoch_200_compltion_infuse.pth",
         "validate": false,
