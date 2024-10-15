@@ -82,6 +82,8 @@ def collect_task_data(all_demo_dataset):
             complete_rate = round(index_in_demo / demo_length, 2)
             task_description = exporting_dataset._demo_id_to_demo_lang_str[demo_id]
 
+            if task_description != 'pick_the_squash_from_the_plate_and_place_it_in_the_pan'.replace('_', ' '): continue
+
             save_key = (task_description, complete_rate)
 
             if save_key not in saved_keys:
