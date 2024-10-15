@@ -22,10 +22,7 @@ class TaskDBManager:
             subdir_path = os.path.join(self.db_root, subdir)
             if os.path.isdir(subdir_path):
                 # Load task_progress_states_mapping.pkl
-                progress_file_single = os.path.join(subdir_path, "task_progress_states_mapping.pkl")
-                progress_file_double = os.path.join(subdir_path, "task_progress_states_mapping.pkl.pkl")
-
-                progress_file = progress_file_double if os.path.exists(progress_file_double) else progress_file_single
+                progress_file = os.path.join(subdir_path, "task_progress_states_mapping.pkl")
 
                 if os.path.exists(progress_file):
                     with open(progress_file, 'rb') as f:
