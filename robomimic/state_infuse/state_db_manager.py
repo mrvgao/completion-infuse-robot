@@ -27,7 +27,6 @@ class TaskDBManager:
 
                 if os.path.exists(progress_file):
                     with open(progress_file, 'rb') as f:
-                        print(progress_file)
                         progress_data = pickle.load(f)
                         self.task_progress_states_mapping.update(progress_data)
                         for key in progress_data.keys():
