@@ -172,7 +172,7 @@ def extract_and_export_image_parallel(all_demo_dataset):
                 os.makedirs(save_dir)
 
             with open(os.path.join(save_dir, 'task_progress_states_mapping.pkl'), 'wb') as f:
-                pickle.dump(internal_state, f)
+                pickle.dump(task_progress_states_mapping[task_desc], f)
 
         for future in concurrent.futures.as_completed(futures):
             try:

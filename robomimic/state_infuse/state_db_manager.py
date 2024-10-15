@@ -28,7 +28,6 @@ class TaskDBManager:
                 progress_file = progress_file_double if os.path.exists(progress_file_double) else progress_file_single
 
                 if os.path.exists(progress_file):
-                    print(f"Loading data from {progress_file}")
                     with open(progress_file, 'rb') as f:
                         progress_data = pickle.load(f)
                         self.task_progress_states_mapping.update(progress_data)
