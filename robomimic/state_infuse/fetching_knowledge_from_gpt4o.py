@@ -161,7 +161,8 @@ def extract_and_export_image_parallel(all_demo_dataset):
 
                 if task_description not in tasks_states:
                     tasks_states[task_description] = {}
-                    tasks_states[task_description][save_key] = internal_state
+
+                tasks_states[task_description][save_key] = internal_state
 
             except Exception as exc:
                 print(f'Task generated an exception: {exc}')
@@ -172,7 +173,7 @@ def extract_and_export_image_parallel(all_demo_dataset):
                 os.makedirs(save_dir)
 
             with open(os.path.join(save_dir, 'task_progress_states_mapping.pkl'), 'wb') as f:
-                pickle.dump(task_progress_states_mapping[task_desc], f)
+                pickle.dump(tasks_states[task_desc], f)
 
         for future in concurrent.futures.as_completed(futures):
             try:
