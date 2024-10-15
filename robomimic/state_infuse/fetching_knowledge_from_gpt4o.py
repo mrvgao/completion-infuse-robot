@@ -19,9 +19,9 @@ import ast
 import time
 import concurrent.futures
 from multiprocessing import cpu_count
-from robomimic.state_infuse.state_db_manager import StateDBManager
+from robomimic.state_infuse.state_db_manager import TaskDBManager
 
-stata_db_manager = StateDBManager("./state_db")
+stata_db_manager = TaskDBManager("./state_db")
 
 TASK_PATH_MAPPING = {
     "OpenDrawer": "/data3/mgao/robocasa/datasets/v0.1/single_stage/kitchen_drawer/OpenDrawer/mg/2024-05-04-22-38-42/demo_gentex_im128_randcams.hdf5",
