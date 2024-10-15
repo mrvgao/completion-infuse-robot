@@ -373,7 +373,7 @@ def run_rollout(
                                                             )
 
                 # emb_from_openai = get_openai_embeddings([internal_state])
-                next_action_emb_from_clip = lang_encoder.get_lang_emb([internal_state])
+                next_action_emb_from_clip = lang_encoder.get_lang_emb([next_action])
                 next_action_emb_from_clip = TensorUtils.to_numpy(next_action_emb_from_clip)
                 next_action_emb_from_clip = torch.tensor(next_action_emb_from_clip).to(policy.policy.device).to(torch.float)
 
