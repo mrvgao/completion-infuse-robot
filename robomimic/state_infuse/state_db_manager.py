@@ -26,6 +26,7 @@ class TaskDBManager:
                 error_file = os.path.join(subdir_path, "error_recoding.pkl")
 
                 if os.path.exists(progress_file):
+                    print(f"Loading data from {progress_file} and {error_file}")
                     with open(progress_file, 'rb') as f:
                         progress_data = pickle.load(f)
                         self.task_progress_states_mapping.update(progress_data)
