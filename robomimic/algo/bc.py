@@ -30,10 +30,7 @@ import os
 import random
 from robomimic.state_infuse.state_db_manager import TaskDBManager
 
-try:
-    task_db_manager = TaskDBManager("./state_db")
-except (EOFError, ValueError) as e:
-    task_db_manager = None
+task_db_manager = TaskDBManager("./state_db")
 
 
 @register_algo_factory_func("bc")
