@@ -137,13 +137,7 @@ def process_task(task):
         print('get error: ', e)
         print('when processing task: ', task_description, ' with progress: ', complete_rate)
 
-    # Save the results to disk
-    save_dir = os.path.join('state_db', task_description.replace(' ', '_').replace('/', '_'))
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-
-    with open(os.path.join(save_dir, 'task_progress_states_mapping.pkl'), 'wb') as f:
-        pickle.dump(internal_state, f)
+    return (task_description, save_key, internal_state)
 
 
 def extract_and_export_image_parallel(all_demo_dataset):
@@ -156,6 +150,28 @@ def extract_and_export_image_parallel(all_demo_dataset):
     # Process tasks in parallel
     with concurrent.futures.ThreadPoolExecutor(max_workers=cpu_count()) as executor:
         futures = [executor.submit(process_task, task) for task in task_data]
+
+        tasks_states = {}
+
+        for future in concurrent.futures.as_completed(futures):
+            try:
+                task_description, save_key, internal_state = future.result()
+
+                if task_description not in tasks_states:
+                    tasks_states[task_description] = {}
+                    tasks_states[task_description][save_key] = internal_state
+
+            except Exception as exc:
+                print(f'Task generated an exception: {exc}')
+
+        for task_desc in tasks_states:
+            save_dir = os.path.join('state_db', task_desc.replace(' ', '_').replace('/', '_'))
+            if not os.path.exists(save_dir):
+                os.makedirs(save_dir)
+
+            with open(os.path.join(save_dir, 'task_progress_states_mapping.pkl'), 'wb') as f:
+                pickle.dump(internal_state, f)
+
         for future in concurrent.futures.as_completed(futures):
             try:
                 future.result()  # Check for any exceptions raised during execution
