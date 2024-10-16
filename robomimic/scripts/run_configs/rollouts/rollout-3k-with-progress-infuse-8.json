@@ -4,8 +4,8 @@
     "cuda_mark": "cuda:6",
     "experiment": {
         "name": "rollout-TASL-3k-infuse-progress-8-from-state-db-with-openai",
-        "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-8/TASL-3k-infuse-progress-8-from-state-db-with-openai/20241014175511/models/model_epoch_200.pth",
-        "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-8/TASL-3k-infuse-progress-8-from-state-db-with-openai/20241014175511/models/model_epoch_200_compltion_infuse.pth",
+        "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-8/TASL-3k-infuse-progress-8-from-state-db-with-openai/20241015174938/models/model_epoch_200.pth",
+        "state_mapping_ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-3k-8/TASL-3k-infuse-progress-8-from-state-db-with-openai/20241015174938/models/model_epoch_200_compltion_infuse.pth",
         "validate": false,
         "only_rollout": true,
         "logging": {
