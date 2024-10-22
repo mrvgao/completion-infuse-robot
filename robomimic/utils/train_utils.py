@@ -344,17 +344,18 @@ def run_rollout(
         else:
             policy_ob = ob_dict
             if with_progress_correct:
-                first_left_image = ob_dict['robot0_agentview_left_image'][0]
-                first_hand_image = ob_dict['robot0_eye_in_hand_image'][0]
-                first_right_image = ob_dict['robot0_agentview_right_image'][0]
-                task_emb = torch.Tensor(policy._ep_lang_emb).unsqueeze(0).to(policy.policy.device)
+                first_left_image = ob_dict['robot0_agentview_left_image']
+                first_hand_image = ob_dict['robot0_eye_in_hand_image']
+                first_right_image = ob_dict['robot0_agentview_right_image']
+                task_emb = torch.Tensor(policy._ep_lang_emb).to(policy.policy.device)
+                task_emb = task_emb.repeat(10, 1, 1)
 
-                first_left_image_transformed = resnet_transformer(first_left_image.transpose(1, 2, 0)).unsqueeze(0).to(
+                first_left_image_transformed = resnet_transformer(first_left_image.transpose(2, 3, 1)).to(
                     policy.policy.device)
-                first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(1, 2, 0)).unsqueeze(0).to(
+                first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(2, 3, 1)).to(
                     policy.policy.device)
-                first_right_image_transformed = resnet_transformer(first_right_image.transpose(1, 2, 0)).unsqueeze(
-                    0).to(policy.policy.device)
+                first_right_image_transformed = resnet_transformer(first_right_image.transpose(2, 3, 1)).to(
+                    policy.policy.device)
 
                 complete_rate_by_model = policy.policy.progress_provider(
                     first_left_image_transformed,
@@ -365,8 +366,9 @@ def run_rollout(
 
                 print('complete_rate_by_model: ', complete_rate_by_model)
 
+                import pdb; pdb.set_trace()
                 # complete_rate = step_i / horizon
-                complete_rate = complete_rate_by_model.cpu().detach().numpy()[0][0]
+                complete_rate = torch.mean(complete_rate_by_model).cpu().detach().numpy()[0][0]
 
                 # complete_rate = complete_rate[0][0].cpu().detach().numpy()
 
