@@ -348,7 +348,7 @@ def run_rollout(
                 hand_images = ob_dict['robot0_eye_in_hand_image']
                 right_images = ob_dict['robot0_agentview_right_image']
                 task_emb = torch.Tensor(policy._ep_lang_emb).to(policy.policy.device)
-                task_emb = task_emb.repeat(10, 1, 1)
+                task_emb = task_emb.repeat(10, 1)
 
                 first_left_image_transformed = torch.stack([
                     resnet_transformer(_image) for _image in left_images.transpose(0, 2, 3, 1)
