@@ -344,16 +344,22 @@ def run_rollout(
         else:
             policy_ob = ob_dict
             if with_progress_correct:
+                first_left_image = ob_dict['robot0_agentview_left_image'][0]
+                first_hand_image = ob_dict['robot0_eye_in_hand_image'][0]
+                first_right_image = ob_dict['robot0_agentview_right_image'][0]
                 task_emb = torch.Tensor(policy._ep_lang_emb).unsqueeze(0).to(policy.policy.device)
 
-                left_image = resnet_transformer(ob_dict['robot0_agentview_left_image'][0]).to(policy.policy.device)
-                hand_image = resnet_transformer(ob_dict['robot0_eye_in_hand_image'][0]).to(policy.policy.device)
-                right_image = resnet_transformer(ob_dict['robot0_agentview_right_image'][0]).to(policy.policy.device)
+                first_left_image_transformed = resnet_transformer(first_left_image.transpose(1, 2, 0)).unsqueeze(0).to(
+                    policy.policy.device)
+                first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(1, 2, 0)).unsqueeze(0).to(
+                    policy.policy.device)
+                first_right_image_transformed = resnet_transformer(first_right_image.transpose(1, 2, 0)).unsqueeze(
+                    0).to(policy.policy.device)
 
                 complete_rate_by_model = policy.policy.progress_provider(
-                    left_image,
-                    hand_image,
-                    right_image,
+                    first_left_image_transformed,
+                    first_hand_image_transformed,
+                    first_right_image_transformed,
                     task_emb
                 )
 
