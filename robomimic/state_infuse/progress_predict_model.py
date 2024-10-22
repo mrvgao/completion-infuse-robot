@@ -57,6 +57,8 @@ class ValueResNetWithAttnPerformance(nn.Module):
 
     def forward(self, image1, image2, image3, text_embedding):
         # Combine the three images into one batch to pass through ResNet
+        import pdb; pdb.set_trace
+
         images = torch.cat([image1, image2, image3], dim=1)
         image_features = self.resnet(images)
 
