@@ -371,8 +371,6 @@ def run_rollout(
 
                 complete_rate = torch.mean(complete_rate_by_model).detach().cpu().numpy().item()
 
-                print('complete_rate_by_model: ', complete_rate)
-
                 # complete_rate = complete_rate[0][0].cpu().detach().numpy()
 
                 next_action = task_db_manager.retrieve_data(task_str,
