@@ -390,7 +390,7 @@ def run_rollout(
                 complete_rate_ratio = torch.Tensor([complete_rate]).unsqueeze(0).to(policy.policy.device).to(torch.float)
 
                 state_emb = policy.policy.state_mapping_model(
-                    complete_rate_ratio, task_emb,
+                    complete_rate_ratio, task_emb[0],
                     next_action_emb_from_clip
                 )
 
