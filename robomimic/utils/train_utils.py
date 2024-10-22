@@ -350,11 +350,11 @@ def run_rollout(
                 task_emb = torch.Tensor(policy._ep_lang_emb).to(policy.policy.device)
                 task_emb = task_emb.repeat(10, 1, 1)
 
-                first_left_image_transformed = resnet_transformer(first_left_image.transpose(2, 3, 1)).to(
+                first_left_image_transformed = resnet_transformer(first_left_image.transpose(0, 2, 3, 1)).to(
                     policy.policy.device)
-                first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(2, 3, 1)).to(
+                first_hand_image_transformed = resnet_transformer(first_hand_image.transpose(0, 2, 3, 1)).to(
                     policy.policy.device)
-                first_right_image_transformed = resnet_transformer(first_right_image.transpose(2, 3, 1)).to(
+                first_right_image_transformed = resnet_transformer(first_right_image.transpose(0, 2, 3, 1)).to(
                     policy.policy.device)
 
                 complete_rate_by_model = policy.policy.progress_provider(
