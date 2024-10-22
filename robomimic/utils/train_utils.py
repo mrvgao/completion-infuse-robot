@@ -371,7 +371,7 @@ def run_rollout(
                     first_left_image_transformed,
                     first_hand_image_transformed,
                     first_right_image_transformed,
-                    task_emb
+                    task_emb.repeat(10, 1, 1)
                 )
 
                 print('complete_rate_by_model: ', complete_rate_by_model)
