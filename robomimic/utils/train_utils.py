@@ -360,6 +360,8 @@ def run_rollout(
                 first_right_image = policy_ob["robot0_agentview_right_image"]
                 first_hand_image = policy_ob["robot0_eye_in_hand_image"]
 
+                import pdb; pdb.set_trace()
+
                 first_left_image_transformed = resnet_transformer(first_left_image)
                 first_right_image_transformed = resnet_transformer(first_right_image)
                 first_hand_image_transformed = resnet_transformer(first_hand_image)
