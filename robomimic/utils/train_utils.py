@@ -389,10 +389,8 @@ def run_rollout(
                 # embedding_tensor_from_openai = torch.tensor(next_action_emb_from_clip).to(policy.policy.device).to(torch.float)
                 complete_rate_ratio = torch.Tensor([complete_rate]).unsqueeze(0).to(policy.policy.device).to(torch.float)
 
-                import pdb; pdb.set_trace()
-
                 state_emb = policy.policy.state_mapping_model(
-                    complete_rate_ratio, task_emb[0],
+                    complete_rate_ratio, task_emb[0].unsqueeze(0),
                     next_action_emb_from_clip
                 )
 
