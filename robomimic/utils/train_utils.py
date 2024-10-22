@@ -263,20 +263,9 @@ def batchify_obs(obs_list):
     return obs
 
 
-class NumpyToTensor:
-    """Custom transform to convert a NumPy array directly to a PyTorch tensor."""
-    def __call__(self, img):
-        if isinstance(img, np.ndarray):
-            # Convert NumPy array (H x W x C) to PyTorch tensor (C x H x W)
-            # img = torch.from_numpy(img).permute(2, 0, 1).float() / 255.0
-            img = torch.from_numpy(img).permute(2, 0, 1).float()
-        return img
-
-
 resnet_transformer = transforms.Compose([
-    NumpyToTensor(),  # C
-    transforms.Resize((224, 224), antialias=True),
-    # transforms.ToTensor(),
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
 ])
 
