@@ -366,6 +366,8 @@ def run_rollout(
                 print('complete_rate_by_model: ', complete_rate_by_model)
 
                 # complete_rate = step_i / horizon
+                import pdb; pdb.set_trace()
+
                 complete_rate = complete_rate_by_model.cpu().detach().numpy()
 
                 # complete_rate = complete_rate[0][0].cpu().detach().numpy()
