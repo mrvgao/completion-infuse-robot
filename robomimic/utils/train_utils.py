@@ -368,10 +368,10 @@ def run_rollout(
                 first_hand_image_transformed = resnet_transformer(first_hand_image).to(device=policy.policy.device)
 
                 complete_rate_by_model = policy.policy.progress_provider(
-                    first_left_image_transformed,
-                    first_hand_image_transformed,
-                    first_right_image_transformed,
-                    task_emb.repeat(10, 1, 1)
+                    first_left_image_transformed[0],
+                    first_hand_image_transformed[0],
+                    first_right_image_transformed[0],
+                    task_emb
                 )
 
                 print('complete_rate_by_model: ', complete_rate_by_model)
