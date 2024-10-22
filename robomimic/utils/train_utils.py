@@ -369,9 +369,7 @@ def run_rollout(
                     task_emb
                 )
 
-                complete_rate = torch.mean(complete_rate_by_model).detach().cpu().numpy()
-
-                import pdb; pdb.set_trace()
+                complete_rate = torch.mean(complete_rate_by_model).detach().cpu().numpy().item()
 
                 print('complete_rate_by_model: ', complete_rate)
 
