@@ -363,9 +363,9 @@ def run_rollout(
 
                 import pdb; pdb.set_trace()
 
-                first_left_image_transformed = resnet_transformer(first_left_image)
-                first_right_image_transformed = resnet_transformer(first_right_image)
-                first_hand_image_transformed = resnet_transformer(first_hand_image)
+                first_left_image_transformed = resnet_transformer(first_left_image).to(device=policy.policy.device)
+                first_right_image_transformed = resnet_transformer(first_right_image).to(device=policy.policy.device)
+                first_hand_image_transformed = resnet_transformer(first_hand_image).to(device=policy.policy.device)
 
                 complete_rate_by_model = policy.policy.progress_provider(
                     first_left_image_transformed,
