@@ -268,7 +268,8 @@ class NumpyToTensor:
     def __call__(self, img):
         if isinstance(img, np.ndarray):
             # Convert NumPy array (H x W x C) to PyTorch tensor (C x H x W)
-            img = torch.from_numpy(img).permute(2, 0, 1).float() / 255.0
+            # img = torch.from_numpy(img).permute(2, 0, 1).float() / 255.0
+            img = torch.from_numpy(img)
         return img
 
 
