@@ -362,7 +362,6 @@ def run_rollout(
                 left_image = resnet_transformer(ob_dict['robot0_agentview_left_image'][0])
                 hand_image = resnet_transformer(ob_dict['robot0_eye_in_hand_image'][0])
                 right_image = resnet_transformer(ob_dict['robot0_agentview_right_image'][0])
-                task_emb = torch.tensor(ob_dict['lang_emb'][0], dtype=torch.float32)
 
                 complete_rate_by_model = policy.policy.progress_provider(
                     left_image,
