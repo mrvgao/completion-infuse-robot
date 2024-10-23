@@ -1,7 +1,7 @@
 {
     "algo_name": "bc",
     "progress_model_path": "/data2/mgao/self-correction-robot/value_models/progress-monitor-train-with-3k/best_model.pth",
-    "cuda_mark": "cuda:7",
+    "cuda_mark": "cuda:1",
     "experiment": {
         "name": "rollout-TASL-human-50-infuse-progress-from-state-db-8-with-openai",
         "ckpt_path": "/data3/mgao/robocasa/im/bc_xfmr/cvpr-2025-50-8/TASL-human-50-infuse-progress-from-state-db-8-with-openai/20241014175510/models/model_epoch_200.pth",
