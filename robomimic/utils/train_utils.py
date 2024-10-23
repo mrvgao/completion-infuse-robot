@@ -316,6 +316,9 @@ def run_rollout(
     task_str = env._ep_lang_str
     policy.start_episode(lang=task_str)
 
+    if task_str_writer is not None:
+        task_str_writer.write(task_str + '\n')
+
     goal_dict = None
     if use_goals:
         # retrieve goal from the environment
@@ -421,8 +424,6 @@ def run_rollout(
                 success[k] = success[k] | cur_success_metrics[k]
 
         # visualization
-        if task_str_writer is not None:
-            task_str_writer.write(task_str + '\n')
 
         if video_writer is not None:
             if video_count % video_skip == 0:
