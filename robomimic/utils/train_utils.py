@@ -340,7 +340,8 @@ def run_rollout(
     else:
         video_frames = []
     
-    for step_i in range(horizon): #LogUtils.tqdm(range(horizon)):
+    # for step_i in range(horizon): #LogUtils.tqdm(range(horizon)):
+    for step_i in LogUtils.tqdm(range(50)):
         # get action from policy
         if batched:
             policy_ob = batchify_obs(ob_dict)
