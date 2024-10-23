@@ -277,6 +277,7 @@ def run_rollout(
         use_goals=False,
         render=False,
         video_writer=None,
+        task_str_writer=None,
         video_skip=5,
         terminate_on_success=False,
         with_progress_correct=False,
@@ -420,6 +421,9 @@ def run_rollout(
                 success[k] = success[k] | cur_success_metrics[k]
 
         # visualization
+        if task_str_writer is not None:
+            task_str_writer.write(task_str + '\n')
+
         if video_writer is not None:
             if video_count % video_skip == 0:
                 if batched:
@@ -608,6 +612,10 @@ def rollout_with_stats(
             video_str = "_epoch_{}.mp4".format(epoch) if epoch is not None else ".mp4" 
             video_path = os.path.join(video_dir, "{}{}".format(env_name, video_str))
             video_writer = imageio.get_writer(video_path, fps=20)
+
+            task_str_path = '_epoch_{}.txt'.format(epoch) if epoch is not None else '.txt'
+            task_str_file = os.path.join(video_dir, "{}{}".format(env_name, task_str_path))
+            task_str_writer = open(task_str_file, 'w')
             
         env_video_writer = None
         if write_video:
@@ -636,6 +644,7 @@ def rollout_with_stats(
                     render=render,
                     use_goals=use_goals,
                     video_writer=env_video_writer,
+                    task_str_writer=task_str_writer,
                     video_skip=video_skip,
                     terminate_on_success=terminate_on_success,
                     with_progress_correct=with_progress_correct,
@@ -663,6 +672,9 @@ def rollout_with_stats(
                     raise NotImplementedError
                 print("Episode {}, horizon={}, num_success={}".format(ep_i + 1, horizon, num_success))
                 print(json.dumps(rollout_info, sort_keys=True, indent=4))
+
+        if task_str_writer is not None:
+            task_str_writer.close()
 
         if video_dir is not None:
             # close this env's video writer (next env has it's own)
