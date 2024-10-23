@@ -473,13 +473,14 @@ def train(config, device):
             ckpt_path = os.path.join(ckpt_dir, epoch_ckpt_name + "_compltion_infuse.pth")
             print("Saving axuiliary model to {}".format(ckpt_path))
 
-            checkpoint = {
-                'model_state_dict': model.state_mapping_model.state_dict(),
-                'optimizer_state_dict': model.completion_task_embedding_optimizer.state_dict(),
-                'scheduler_state_dict': model.schedulers_for_completion_task_embedding.state_dict(),
-            }
+            if model.state_mapping_model:
+                checkpoint = {
+                    'model_state_dict': model.state_mapping_model.state_dict(),
+                    'optimizer_state_dict': model.completion_task_embedding_optimizer.state_dict(),
+                    'scheduler_state_dict': model.schedulers_for_completion_task_embedding.state_dict(),
+                }
 
-            torch.save(checkpoint, ckpt_path)
+                torch.save(checkpoint, ckpt_path)
 
         # Finally, log memory usage in MB
         process = psutil.Process(os.getpid())
