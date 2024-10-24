@@ -367,14 +367,15 @@ def run_rollout(
                     resnet_transformer(_image) for _image in right_images.transpose(0, 2, 3, 1)
                 ]).to(policy.policy.device)
 
-                complete_rate_by_model = policy.policy.progress_provider(
-                    first_left_image_transformed,
-                    first_hand_image_transformed,
-                    first_right_image_transformed,
-                    task_emb
-                )
+                # complete_rate_by_model = policy.policy.progress_provider(
+                #     first_left_image_transformed,
+                #     first_hand_image_transformed,
+                #     first_right_image_transformed,
+                #     task_emb
+                # )
 
-                complete_rate = torch.mean(complete_rate_by_model).detach().cpu().numpy().item()
+                # complete_rate = torch.mean(complete_rate_by_model).detach().cpu().numpy().item()
+                complete_rate = min(step_i / horizon, 1.0)
 
                 # complete_rate = complete_rate[0][0].cpu().detach().numpy()
 
